@@ -25,6 +25,36 @@ export default function LoginPage() {
     setLogin(newLogin);
   }
 
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    if (login.email === "" || login.password === "") {
+      alert("Preencha os campos corretamente")
+      return
+    }
+
+    const URLLogin = "http://localhost:5000/"
+
+    try {
+      const promise = await axios.post(URLLogin, login)
+      setToken(promise.data.token);
+      localStorage.setItem("token", promise.data.token);
+      navigate("/timeline");
+    } catch (error) {
+      if (error.response.status === 422) {
+        alert("O email deve estar em um formato valido e a senha deve possuir 8 ou mais caracteres")
+        return
+      } else if (error.response.status === 401) {
+        alert("Senha Incorreta")
+        return
+      } else if (error.response.status === 404) {
+        alert("Usuario não encontrado")
+        return
+      }
+    }
+
+  };
+
   return (
     <Conteiner>
       <ContainerText>
@@ -34,31 +64,7 @@ export default function LoginPage() {
         </div>
       </ContainerText>
       <ContainerForm>
-        <form onSubmit={(event) => {
-          event.preventDefault();
-
-          if (login.email === "" || login.password === "") {
-            alert("Preencha os campos corretamente")
-            return
-          }
-
-          const URLLogin = "http://localhost:5000/"
-          const promise = axios.post(URLLogin, login)
-          promise.then(resposta => {
-            setToken(resposta.data.token);
-            localStorage.setItem("token", resposta.data.token);
-            navigate("/timeline");
-          })
-          promise.catch(err => {
-            if (err.response.status === 422) {
-              alert("Dados Incorretos")
-              return
-            } else if (err.response.status === 401) {
-              alert("Usuario não encontrado")
-              return
-            }
-          })
-        }}>
+        <form onSubmit={handleLogin}>
           <input onChange={handleChange} value={login.email} name='email' placeholder='e-mail' type="email" />
           <input onChange={handleChange} value={login.password} name='password' placeholder='password' type="password" />
           <button>Log In</button>
