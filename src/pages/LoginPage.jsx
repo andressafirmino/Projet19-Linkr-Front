@@ -1,7 +1,30 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import styled from "styled-components";
+import axios from "axios";
+import { TokenContext } from '../context/TokenContext';
+import { useNavigate } from 'react-router-dom'
 
 export default function LoginPage() {
+
+  const [login, setLogin] = useState({
+    email: "",
+    password: ""
+  })
+  const { token, setToken } = useContext(TokenContext);
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (token !== null) {
+      navigate("/timeline")
+    }
+  }, [])
+
+  function handleChange(event) {
+    const newLogin = { ...login };
+    newLogin[event.target.name] = event.target.value;
+    setLogin(newLogin);
+  }
+
   return (
     <Conteiner>
       <ContainerText>
@@ -11,12 +34,36 @@ export default function LoginPage() {
         </div>
       </ContainerText>
       <ContainerForm>
-        <form onSubmit={() => { }}>
-          <input placeholder='e-mail' type="text" />
-          <input placeholder='password' type="password" />
+        <form onSubmit={(event) => {
+          event.preventDefault();
+
+          if (login.email === "" || login.password === "") {
+            alert("Preencha os campos corretamente")
+            return
+          }
+
+          const URLLogin = "http://localhost:5000/"
+          const promise = axios.post(URLLogin, login)
+          promise.then(resposta => {
+            setToken(resposta.data.token);
+            localStorage.setItem("token", resposta.data.token);
+            navigate("/timeline");
+          })
+          promise.catch(err => {
+            if (err.response.status === 422) {
+              alert("Dados Incorretos")
+              return
+            } else if (err.response.status === 401) {
+              alert("Usuario não encontrado")
+              return
+            }
+          })
+        }}>
+          <input onChange={handleChange} value={login.email} name='email' placeholder='e-mail' type="email" />
+          <input onChange={handleChange} value={login.password} name='password' placeholder='password' type="password" />
           <button>Log In</button>
         </form>
-        <p>First time? Create an account!</p>
+        <p onClick={() => navigate("/sign-up")}>First time? Create an account!</p>
       </ContainerForm>
     </Conteiner>
   )
