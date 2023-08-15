@@ -12,6 +12,8 @@ export default function LoginPage() {
   })
   const { token, setToken } = useContext(TokenContext);
   const navigate = useNavigate()
+  const [isLoading, setIsLoading] = useState(false);
+
 
   useEffect(() => {
     if (token !== null) {
@@ -32,6 +34,7 @@ export default function LoginPage() {
       alert("Preencha os campos corretamente")
       return
     }
+    setIsLoading(true);
 
     const URLLogin = "http://localhost:5000/"
 
@@ -51,6 +54,8 @@ export default function LoginPage() {
         alert("Usuario não encontrado")
         return
       }
+    } finally {
+      setIsLoading(false);
     }
 
   };
@@ -67,7 +72,8 @@ export default function LoginPage() {
         <form onSubmit={handleLogin}>
           <input onChange={handleChange} value={login.email} name='email' placeholder='e-mail' type="email" />
           <input onChange={handleChange} value={login.password} name='password' placeholder='password' type="password" />
-          <button>Log In</button>
+          <button disabled={isLoading}>{isLoading ? 'Loading...' : 'Log In'}</button>
+
         </form>
         <p onClick={() => navigate("/sign-up")}>First time? Create an account!</p>
       </ContainerForm>
