@@ -1,14 +1,15 @@
 import React, { useContext, useState } from 'react'
 import { styled } from 'styled-components'
-import { TokenContext } from '../context/TokenContext';
 import { useNavigate } from 'react-router-dom';
+import { TokenContext } from '../context/TokenContext';
+import { MenuContext } from '../context/MenuContext';
 
 
 export default function Header() {
 
   const { setToken } = useContext(TokenContext);
+  const { open, setOpen, rotate, setRotate } = useContext(MenuContext)
   const navigate = useNavigate()
-  const [open, setOpen] = useState("none")
 
   return (
     <>
@@ -18,14 +19,18 @@ export default function Header() {
             navigate("/timeline")
           }}>linkr</p>
           <div>
-            <ion-icon onClick={() => {
+            <div onMouseUp={() => {
               if (open === "none") {
                 setOpen("flex")
+                setRotate("rotate(180deg)")
               } else {
                 setOpen("none")
+                setRotate("rotate(0)")
               }
-            }} name="chevron-down-outline"></ion-icon>
-            <img src="" alt="UserImg" />
+            }}>
+              <ion-icon style={{ transform: rotate }} name="chevron-down-outline"></ion-icon>
+              <img src="" alt="UserImg" />
+            </div>
           </div>
         </Conteiner>
         <Menu style={{ display: open }}>
@@ -33,7 +38,8 @@ export default function Header() {
             setToken(null);
             localStorage.removeItem('token');
             setOpen("none")
-            navigate("/");
+            setRotate("rotate(0)")
+            navigate("/")
           }}>Logout</p>
         </Menu >
       </Head>
