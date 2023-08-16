@@ -37,7 +37,7 @@ export default function TimeLinePage() {
         setReload(true);
       })
       .catch(e => {
-        alert(e.response.data.message);
+        alert("Houve um erro ao publicar seu link");
         setDisabled(false);
       })
   }
@@ -52,15 +52,15 @@ export default function TimeLinePage() {
         <Title>
           <p>timeline</p>
         </Title>
-        <BoxPost>
+        <BoxPost data-test="publish-box" >
           <p className='question'>What are you going to share today?</p>
           <form onSubmit={publicPost}>
-            <input className='link' placeholder="http://..." required value={link} onChange={(e) => setLink(e.target.value)} disabled={disabled} />
-            <input className='description' placeholder='Awesome article about #javascript' value={descript} onChange={(e) => setDescript(e.target.value)} disabled={disabled} />
+            <input className='link' placeholder="http://..." required value={link} onChange={(e) => setLink(e.target.value)} disabled={disabled} data-test="link"/>
+            <input className='description' placeholder='Awesome article about #javascript' value={descript} onChange={(e) => setDescript(e.target.value)} disabled={disabled} data-test="description"/>
             <BoxButton>
-              <button type='submit' disabled={disabled} >
+              <button type='submit' disabled={disabled} data-test="publish-btn">
                 {disabled ? (
-                  <ThreeDots width={32} height={21} border-radius={4.5} background-color="#1877F2" color="#FFFFFF" font-size={9} />
+                  <>Publishing...</>
                 ) : (
                   <>Publish</>
                 )}</button>
@@ -96,6 +96,7 @@ const Title = styled.div`
   p {
     font-size: 33px;
     font-weight: 700;
+    font-family: 'Oswald', sans-serif;
     color: #FFFFFF;
   }
 `
@@ -110,6 +111,7 @@ const BoxPost = styled.div`
   align-items: center;
   margin-bottom: 16px;
   padding: 15px;
+  font-family: 'Lato', sans-serif;
   .question {
       width: calc(100vw - 30px);
       height: 35px;
