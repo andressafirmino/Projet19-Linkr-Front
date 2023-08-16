@@ -1,11 +1,46 @@
-import React, { useContext } from 'react'
-import Header from '../components/Header'
+import React, { useContext, useEffect, useState } from 'react';
+import Header from '../components/Header';
 import { MenuContext } from '../context/MenuContext';
 import { styled } from 'styled-components';
+import axios from 'axios';
+import { TokenContext } from '../context/TokenContext';
+import { ThreeDots } from "react-loader-spinner";
 
 export default function TimeLinePage() {
 
-  const { setOpen, setRotate } = useContext(MenuContext)
+  const { setOpen, setRotate } = useContext(MenuContext);
+  const { token } = useContext(TokenContext);
+  const [link, setLink] = useState('');
+  const [descript, setDescript] = useState('');
+  const [disabled, setDisabled] = useState(false);
+  const [reload, setReload] = useState(false);
+
+  /* useEffect(() => {
+    setReload(false);
+  }, reload); */
+
+  function publicPost(e) {
+    e.preventDefault();
+
+    setDisabled(true);
+    const url = `${process.env.REACT_APP_API_URL}/timeline`;
+    const body = {
+      link, descript
+    }
+    axios.post(url, body, {
+      headers: { authorization: `Bearer ${token}` }
+    })
+      .then(() => {
+        setLink('');
+        setDescript('');        
+        setDisabled(false);
+        setReload(true);
+      })
+      .catch(e => {
+        alert(e.response.data.message);
+        setDisabled(false);
+      })
+  }
 
   return (
     <>
@@ -19,15 +54,22 @@ export default function TimeLinePage() {
         </Title>
         <BoxPost>
           <p className='question'>What are you going to share today?</p>
-          <input className='link' placeholder="http://..."/>
-          <input className='description' placeholder='Awesome article about #javascript'/>
-          <BoxButton>
-            <button>Publish</button>
-          </BoxButton>
+          <form onSubmit={publicPost}>
+            <input className='link' placeholder="http://..." required value={link} onChange={(e) => setLink(e.target.value)} disabled={disabled} />
+            <input className='description' placeholder='Awesome article about #javascript' value={descript} onChange={(e) => setDescript(e.target.value)} disabled={disabled} />
+            <BoxButton>
+              <button type='submit' disabled={disabled} >
+                {disabled ? (
+                  <ThreeDots width={32} height={21} border-radius={4.5} background-color="#1877F2" color="#FFFFFF" font-size={9} />
+                ) : (
+                  <>Publish</>
+                )}</button>
+            </BoxButton>
+          </form>
         </BoxPost>
         <BoxPublication>
           <Sider>
-            <img/>
+            <img />
             <div className='icon'></div>
             <p className='likes'>teste</p>
           </Sider>
@@ -67,6 +109,7 @@ const BoxPost = styled.div`
   justify-content: space-around;
   align-items: center;
   margin-bottom: 16px;
+  padding: 15px;
   .question {
       width: calc(100vw - 30px);
       height: 35px;
@@ -76,12 +119,16 @@ const BoxPost = styled.div`
       font-weight: 300;
       color: #707070;
   }
-  input {
+  form {
     width: calc(100vw - 30px);
+  }
+  input { 
+    width: calc(100vw - 30px);   
     border-radius: 5px;
     border: none;
     background-color: #EFEFEF;
     padding: 11px;
+    margin-bottom: 5px;
     ::placeholder {
       font-size: 13px;
       font-weight: 300;
@@ -89,7 +136,7 @@ const BoxPost = styled.div`
     }
   }
   .link {    
-    height: 30px;    
+    height: 30px;  
   }
   .description {
     height: 47px;
@@ -108,6 +155,9 @@ const BoxButton = styled.div`
     color: #FFFFFF;
     font-size: 13px;
     font-weight: 700;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 `
 const BoxPublication = styled.div`
