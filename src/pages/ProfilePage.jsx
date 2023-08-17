@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import Header from "../components/Header";
 import { MenuContext } from "../context/MenuContext";
-import { styled } from "styled-components";
+import styled from "styled-components";
 import { UserDataContext } from "../context/UserDataContext";
 import Posts from "../components/Posts";
 import axios from "axios";
+import Trending from "../components/Trending";
 
 export default function ProfilePage() {
   const { setOpen, setRotate } = useContext(MenuContext);
@@ -41,6 +42,7 @@ export default function ProfilePage() {
         {/* {userPosts.map((post) => (
           <Posts key={post.id} post={post} />
         ))} */}
+        <Trending />
       </Window>
     </>
   );
@@ -55,7 +57,7 @@ const Window = styled.div`
 const UserInfo = styled.div`
   display: flex;
   align-items: center;
-  margin-left: 17px;
+  margin-left: 10px;
   margin-bottom: 16px;
 `;
 
@@ -73,8 +75,8 @@ const Title = styled.div`
 `;
 
 const UserImage = styled.img`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  border-radius: 27px;
   margin-right: 10px;
 `;
