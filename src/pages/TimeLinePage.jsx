@@ -10,8 +10,9 @@ import Posts from "../components/Posts";
 export default function TimeLinePage() {
   const { setOpen, setRotate } = useContext(MenuContext);
   const { token } = useContext(UserDataContext);
+  const { userId } = useContext(UserDataContext);
   const [link, setLink] = useState("");
-  const [descript, setDescript] = useState("");
+  const [description, setDescription] = useState("");
   const [disabled, setDisabled] = useState(false);
   const [reload, setReload] = useState(false);
   const [posts, setPosts] = useState([]);
@@ -39,7 +40,8 @@ export default function TimeLinePage() {
     const url = `${process.env.REACT_APP_API_URL}/timeline`;
     const body = {
       link,
-      descript,
+      description,
+      userId,
     };
     axios
       .post(url, body, {
@@ -47,7 +49,7 @@ export default function TimeLinePage() {
       })
       .then(() => {
         setLink("");
-        setDescript("");
+        setDescription("");
         setDisabled(false);
         setReload(true);
       })
@@ -84,8 +86,8 @@ export default function TimeLinePage() {
             <input
               className="description"
               placeholder="Awesome article about #javascript"
-              value={descript}
-              onChange={(e) => setDescript(e.target.value)}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               disabled={disabled}
               data-test="description"
             />
