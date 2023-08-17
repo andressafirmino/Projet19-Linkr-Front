@@ -16,22 +16,31 @@ export default function TimeLinePage() {
   const [disabled, setDisabled] = useState(false);
   const [reload, setReload] = useState(false);
   const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // useEffect(() => {
-  //   fetchPosts();
-  // }, [reload]);
+  useEffect(() => {
+    fetchPosts();
+  }, [reload]);
 
-  // function fetchPosts() {
-  //   const url = `${process.env.REACT_APP_API_URL}/posts`;
-  //   axios
-  //     .get(url)
-  //     .then((response) => {
-  //       setPosts(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching posts:", error);
-  //     });
-  // }
+  function fetchPosts() {
+    const url = `${process.env.REACT_APP_API_URL}/`;
+    setLoading(true);
+
+    axios
+      .get(url)
+      .then((response) => {
+        setPosts(response.data);
+        setLoading(false);
+      })
+      .catch((e) => {
+        alert(
+          "Houve uma falha ao obter os posts. Por favor, atualize a página."
+        );
+        console.log(e);
+        setLoading(false);
+      });
+  }
 
   function publicPost(e) {
     e.preventDefault();
@@ -60,7 +69,8 @@ export default function TimeLinePage() {
   }
 
   return (
-    <>
+    <PageContainer>
+      {loading ? <p>Carregando...</p> : null}
       <Header />
       <Windown
         onClick={() => {
@@ -98,24 +108,36 @@ export default function TimeLinePage() {
             </BoxButton>
           </form>
         </BoxPost>
-        <Posts />
-        {/* {posts.map((post) => (
-          <Posts key={post.id} post={post} />
-        ))} */}
+        {posts.map((posts) => (
+          <Posts key={posts.id} post={posts} />
+        ))}
       </Windown>
-    </>
+    </PageContainer>
   );
 }
-const Windown = styled.div`
+
+const PageContainer = styled.div`
   width: 100vw;
   height: 100vh;
   background-color: #333333;
+  overflow: hidden;
+`;
+const Windown = styled.div`
+  height: calc(100vh - 72px);
+  background-color: #333333;
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
 `;
 const Title = styled.div`
   height: 80px;
   display: flex;
   align-items: center;
   margin-left: 17px;
+
   p {
     font-size: 33px;
     font-weight: 700;
@@ -132,9 +154,9 @@ const BoxPost = styled.div`
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
-  margin-bottom: 16px;
   padding: 15px;
   font-family: "Lato", sans-serif;
+
   .question {
     width: calc(100vw - 30px);
     height: 35px;
