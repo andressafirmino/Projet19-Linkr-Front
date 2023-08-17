@@ -3,13 +3,13 @@ import Header from "../components/Header";
 import { MenuContext } from "../context/MenuContext";
 import { styled } from "styled-components";
 import axios from "axios";
-import { TokenContext } from "../context/TokenContext";
+import { UserDataContext } from "../context/UserDataContext";
 import { ThreeDots } from "react-loader-spinner";
 import Posts from "../components/Posts";
 
 export default function TimeLinePage() {
   const { setOpen, setRotate } = useContext(MenuContext);
-  const { token } = useContext(TokenContext);
+  const { token } = useContext(UserDataContext);
   const [link, setLink] = useState("");
   const [descript, setDescript] = useState("");
   const [disabled, setDisabled] = useState(false);

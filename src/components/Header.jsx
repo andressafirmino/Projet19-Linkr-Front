@@ -1,13 +1,13 @@
 import React, { useContext, useState } from 'react'
 import { styled } from 'styled-components'
 import { useNavigate } from 'react-router-dom';
-import { TokenContext } from '../context/TokenContext';
+import { UserDataContext } from '../context/UserDataContext';
 import { MenuContext } from '../context/MenuContext';
 
 
 export default function Header() {
 
-  const { setToken } = useContext(TokenContext);
+  const { setToken, userImage, setUserImage, setUserId, setUsername } = useContext(UserDataContext);
   const { open, setOpen, rotate, setRotate } = useContext(MenuContext)
   const navigate = useNavigate()
 
@@ -29,14 +29,20 @@ export default function Header() {
               }
             }}>
               <ion-icon style={{ transform: rotate }} name="chevron-down-outline"></ion-icon>
-              <img src="" alt="UserImg" />
+              <img src={userImage} alt="UserImg" />
             </div>
           </div>
         </Conteiner>
         <Menu style={{ display: open }}>
           <p onClick={() => {
             setToken(null);
+            setUserImage(null);
+            setUserId(null);
+            setUsername(null);
             localStorage.removeItem('token');
+            localStorage.removeItem('userImage');
+            localStorage.removeItem('userId');
+            localStorage.removeItem('username');
             setOpen("none")
             setRotate("rotate(0)")
             navigate("/")

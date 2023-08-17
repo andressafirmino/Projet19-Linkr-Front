@@ -2,13 +2,13 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import TimeLinePage from "./pages/TimeLinePage";
-import { TokenProvider } from "./context/TokenContext";
+import { UserDataProvider } from "./context/UserDataContext";
 import { MenuProvider } from "./context/MenuContext";
 
 function App() {
   return (
     <>
-      <TokenProvider>
+      <UserDataProvider>
         <MenuProvider>
           <BrowserRouter>
             <Routes>
@@ -18,7 +18,7 @@ function App() {
             </Routes>
           </BrowserRouter>
         </MenuProvider>
-      </TokenProvider>
+      </UserDataProvider>
     </>
   );
 }

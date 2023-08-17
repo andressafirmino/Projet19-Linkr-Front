@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import styled from "styled-components";
 import axios from "axios";
-import { TokenContext } from '../context/TokenContext';
+import { UserDataContext } from '../context/UserDataContext';
 import { useNavigate } from 'react-router-dom'
 
 export default function LoginPage() {
@@ -10,7 +10,7 @@ export default function LoginPage() {
     email: "",
     password: ""
   })
-  const { token, setToken } = useContext(TokenContext);
+  const { token, setToken, setUserImage, setUserId, setUsername } = useContext(UserDataContext);
   const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false);
 
@@ -41,7 +41,15 @@ export default function LoginPage() {
     try {
       const promise = await axios.post(URLLogin, login)
       setToken(promise.data.token);
+      setUserImage(promise.data.image);
+      setUserId(promise.data.userId);
+      setUsername(promise.data.username);
+
       localStorage.setItem("token", promise.data.token);
+      localStorage.setItem("userImage", promise.data.image);
+      localStorage.setItem("userId", promise.data.userId);
+      localStorage.setItem("username", promise.data.username);
+
       navigate("/timeline");
     } catch (error) {
       if (error.response.status === 422) {
