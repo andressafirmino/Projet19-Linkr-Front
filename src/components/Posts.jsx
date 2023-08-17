@@ -4,8 +4,8 @@ import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlin
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import { useState } from "react";
 
-function Posts({ post }) {
-  const [liked, setLiked] = useState(false);
+function Posts({ post, like }) {
+  const [liked, setLiked] = useState(like);
 
   const handleLikeClick = () => {
     setLiked(!liked);

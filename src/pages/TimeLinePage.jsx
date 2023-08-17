@@ -17,13 +17,13 @@ export default function TimeLinePage() {
   const [reload, setReload] = useState(false);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  console.log(posts);
   useEffect(() => {
     fetchPosts();
   }, [reload]);
 
   function fetchPosts() {
-    const url = `${process.env.REACT_APP_API_URL}/`;
+    const url = `${process.env.REACT_APP_API_URL}/?userId=${userId}`;
     setLoading(true);
 
     axios
@@ -110,7 +110,9 @@ export default function TimeLinePage() {
         {posts.length === 0 ? (
           <p className="noPosts">Sem posts até o momento</p>
         ) : (
-          posts.map((post) => <Posts key={post.id} post={post} />)
+          posts.map((post) => (
+            <Posts key={post.id} post={post} like={post.liked} />
+          ))
         )}
       </Windown>
     </PageContainer>
