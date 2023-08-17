@@ -17,7 +17,6 @@ export default function TimeLinePage() {
   const [reload, setReload] = useState(false);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchPosts();
@@ -108,9 +107,11 @@ export default function TimeLinePage() {
             </BoxButton>
           </form>
         </BoxPost>
-        {posts.map((posts) => (
-          <Posts key={posts.id} post={posts} />
-        ))}
+        {posts.length === 0 ? (
+          <p className="noPosts">Sem posts até o momento</p>
+        ) : (
+          posts.map((post) => <Posts key={post.id} post={post} />)
+        )}
       </Windown>
     </PageContainer>
   );
@@ -131,6 +132,22 @@ const Windown = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 16px;
+
+  .noPosts {
+    color: #fff;
+    font-family: Oswald;
+    font-size: 33px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+
+    text-align: -webkit-center;
+  }
+  @media (min-width: 640px) {
+    .noPosts {
+      font-size: 43px;
+    }
+  }
 `;
 const Title = styled.div`
   height: 80px;
