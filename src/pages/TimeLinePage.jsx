@@ -17,13 +17,14 @@ export default function TimeLinePage() {
   const [reload, setReload] = useState(false);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  console.log(posts);
   useEffect(() => {
     fetchPosts();
   }, [reload]);
+  console.log(userId);
 
   function fetchPosts() {
-    const url = `${process.env.REACT_APP_API_URL}/?userId=${userId}`;
+    const url = `${process.env.REACT_APP_API_URL}/posts/?userId=${userId}`;
+
     setLoading(true);
 
     axios
