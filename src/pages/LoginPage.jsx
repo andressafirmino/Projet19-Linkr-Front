@@ -36,7 +36,7 @@ export default function LoginPage() {
     }
     setIsLoading(true);
 
-    const URLLogin = "http://localhost:5000/"
+    const URLLogin = `${process.env.REACT_APP_API_URL}`
 
     try {
       const promise = await axios.post(URLLogin, login)
@@ -81,7 +81,6 @@ export default function LoginPage() {
           <input data-test="email" onChange={handleChange} value={login.email} name='email' placeholder='e-mail' type="email" />
           <input data-test="password" onChange={handleChange} value={login.password} name='password' placeholder='password' type="password" />
           <button data-test="login-btn" disabled={isLoading}>{isLoading ? 'Loading...' : 'Log In'}</button>
-
         </form>
         <p data-test="sign-up-link" onClick={() => navigate("/sign-up")}>First time? Create an account!</p>
       </ContainerForm>
