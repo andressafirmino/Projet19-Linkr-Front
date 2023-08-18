@@ -67,7 +67,7 @@ function Posts({ post, like }) {
         </p>
       </Sider>
       <Publi> 
-        <p className="username">{post.ownerUsername}</p>
+        <p className="username" onClick={() => navigate(`user/${post.userId}`)}>{post.ownerUsername}</p>
         <p className="description">
           {post.description}{" "}
           {post.hashtags.map((hashtag, index) => (
