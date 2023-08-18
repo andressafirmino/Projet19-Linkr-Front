@@ -1,10 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import Header from "../components/Header";
 import { MenuContext } from "../context/MenuContext";
 import { styled } from "styled-components";
 import axios from "axios";
 import { UserDataContext } from "../context/UserDataContext";
 import { ThreeDots } from "react-loader-spinner";
+import { usePosts } from "../context/PostsContext";
 import Posts from "../components/Posts";
 
 export default function TimeLinePage() {
@@ -14,24 +15,7 @@ export default function TimeLinePage() {
   const [link, setLink] = useState("");
   const [description, setDescription] = useState("");
   const [disabled, setDisabled] = useState(false);
-  const [reload, setReload] = useState(false);
-  const [posts, setPosts] = useState([]);
-
-  // useEffect(() => {
-  //   fetchPosts();
-  // }, [reload]);
-
-  // function fetchPosts() {
-  //   const url = `${process.env.REACT_APP_API_URL}/posts`;
-  //   axios
-  //     .get(url)
-  //     .then((response) => {
-  //       setPosts(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching posts:", error);
-  //     });
-  // }
+  const { posts, loading, fetchPosts } = usePosts();
 
   function publicPost(e) {
     e.preventDefault();
@@ -51,7 +35,7 @@ export default function TimeLinePage() {
         setLink("");
         setDescription("");
         setDisabled(false);
-        setReload(true);
+        fetchPosts();
       })
       .catch((e) => {
         alert("Houve um erro ao publicar seu link");
@@ -60,7 +44,8 @@ export default function TimeLinePage() {
   }
 
   return (
-    <>
+    <PageContainer>
+      {loading ? <p>Carregando...</p> : null}
       <Header />
       <Windown
         onClick={() => {
@@ -98,24 +83,57 @@ export default function TimeLinePage() {
             </BoxButton>
           </form>
         </BoxPost>
-        <Posts />
-        {/* {posts.map((post) => (
-          <Posts key={post.id} post={post} />
-        ))} */}
+
+        {posts.length === 0 ? (
+          <p className="noPosts">Sem posts até o momento</p>
+        ) : (
+          posts.map((post) => (
+            <Posts key={post.id} post={post} like={post.liked} />
+          ))
+        )}
       </Windown>
-    </>
+    </PageContainer>
   );
 }
-const Windown = styled.div`
+
+const PageContainer = styled.div`
   width: 100vw;
   height: 100vh;
   background-color: #333333;
+  overflow: hidden;
+`;
+const Windown = styled.div`
+  height: calc(100vh - 72px);
+  background-color: #333333;
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+
+  .noPosts {
+    color: #fff;
+    font-family: Oswald;
+    font-size: 33px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+
+    text-align: -webkit-center;
+  }
+  @media (min-width: 640px) {
+    .noPosts {
+      font-size: 43px;
+    }
+  }
 `;
 const Title = styled.div`
   height: 80px;
   display: flex;
   align-items: center;
   margin-left: 17px;
+
   p {
     font-size: 33px;
     font-weight: 700;
@@ -132,9 +150,9 @@ const BoxPost = styled.div`
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
-  margin-bottom: 16px;
   padding: 15px;
   font-family: "Lato", sans-serif;
+
   .question {
     width: calc(100vw - 30px);
     height: 35px;

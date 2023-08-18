@@ -1,24 +1,58 @@
-import React from "react";
+import React, { useState, useContext, useEffect } from "react";
 import styled from "styled-components";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
-import { useState } from "react";
+import { UserDataContext } from "../context/UserDataContext";
+import axios from "axios";
+import { usePosts } from "../context/PostsContext";
 
-function Posts() {
-  const [liked, setLiked] = useState(false);
+function Posts({ post, like }) {
+  const [liked, setLiked] = useState(like);
+  const { userId } = useContext(UserDataContext);
+  const { fetchPosts } = usePosts();
 
   const handleLikeClick = () => {
-    setLiked(!liked);
+    axios
+      .post(`${process.env.REACT_APP_API_URL}/like/${post.id}`, {
+        userId: userId,
+      })
+      .then(() => {
+        setLiked(true);
+        fetchPosts();
+      })
+      .catch((error) => {
+        console.error("Erro ao curtir o post:", error);
+      });
   };
+
+  const handleUnikeClick = () => {
+    axios
+      .delete(`${process.env.REACT_APP_API_URL}/unlike/${post.id}`, {
+        data: {
+          userId: userId,
+        },
+      })
+      .then(() => {
+        setLiked(false);
+        fetchPosts();
+      })
+      .catch((error) => {
+        console.error("Erro ao descurtir o post:", error);
+      });
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
   return (
     <BoxPublication>
       <Sider>
-        <img className="profleImg" />
+        <img className="profleImg" src={post.ownerImage} />
         {liked ? (
           <FavoriteOutlinedIcon
             className="iconLiked"
-            onClick={handleLikeClick}
+            onClick={handleUnikeClick}
           />
         ) : (
           <FavoriteBorderOutlinedIcon
@@ -26,17 +60,23 @@ function Posts() {
             onClick={handleLikeClick}
           />
         )}
-        <p className="likes">13 likes</p>
+        <p className="likes">
+          {post.likes === 1 ? `${post.likes} like` : `${post.likes} likes`}
+        </p>
       </Sider>
       <Publi>
-        <p className="username">Juvenal Juvêncio</p>
-        <p className="text">
-          Muito maneiro esse tutorial de Material UI com React, deem uma olhada!{" "}
-          <span className="highlight">#react</span>{" "}
-          <span className="highlight">#material</span>
+        <p className="username">{post.ownerUsername}</p>
+        <p className="description">
+          {post.description}{" "}
+          {post.hashtags.map((hashtag, index) => (
+            <span key={index} className="highlight">
+              #{hashtag}
+            </span>
+          ))}
         </p>
+
         <div className="link">
-          https://medium.com/edge-coders/all-the-fundamental-react-js-concepts-jammed-into-this-single-medium-article-c83f9b53eac2
+          <p>{post.link} </p>
         </div>
       </Publi>
     </BoxPublication>
@@ -47,15 +87,25 @@ export default Posts;
 
 const BoxPublication = styled.div`
   width: 100%;
+  max-width: 611px;
   background-color: #171717;
   display: flex;
   flex-direction: row;
-  padding: 10px 18px 15px 0;
+  padding: 10px 0 15px 0;
+
+  line-height: normal;
+
+  @media (min-width: 611px) {
+    border-radius: 16px;
+  }
+
+  @media (min-width: 640px) {
+    padding: 20px 0 20px 0;
+  }
 `;
 const Sider = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
   align-items: center;
   img {
     width: 40px;
@@ -69,9 +119,7 @@ const Sider = styled.div`
     text-align: center;
     font-family: Lato;
     font-size: 9px;
-    font-style: normal;
     font-weight: 400;
-    line-height: normal;
 
     margin-top: 12px;
   }
@@ -81,51 +129,81 @@ const Sider = styled.div`
   .iconLiked {
     color: #ff0000;
   }
+  @media (min-width: 640px) {
+    img {
+      width: 50px;
+      height: 50px;
+    }
+    .likes {
+      font-size: 11px;
+    }
+  }
 `;
 const Publi = styled.div`
-  width: 100%;
+  min-width: 288px;
+  max-width: calc(100% - 60px);
+
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 7px;
+  font-size: 15px;
+  margin-right: 18px;
   .username {
     color: #fff;
     font-family: Lato;
     font-size: 17px;
-    font-style: normal;
     font-weight: 400;
-    line-height: normal;
   }
-  .text {
+  .description {
     color: #b7b7b7;
     font-family: Lato;
     font-size: 15px;
     font-style: normal;
     font-weight: 400;
-    line-height: normal;
   }
-  span {
+
+  .highlight {
     color: #fff;
     font-family: Lato;
     font-size: 15px;
     font-style: normal;
     font-weight: 700;
     line-height: normal;
+    margin-left: 5px;
   }
-  .hash {
-    color: #cecece;
-    font-family: Lato;
-    font-size: 9px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-  }
-  div {
+  .link {
     width: 100%;
     height: 115px;
+
+    display: flex;
+
     border: 1px solid #4d4d4d;
     border-radius: 11px;
-    color: #cecece;
     margin-top: 7px;
     padding: 11px;
+
+    overflow: hidden;
+
+    p {
+      width: calc(100% - 22px);
+      color: #cecece;
+      font-family: Lato;
+      font-size: 9px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+  }
+  @media (min-width: 640px) {
+    font-size: 17px;
+    .username {
+      font-size: 19px;
+    }
+    .link {
+      width: auto;
+      max-width: 503px;
+      font-size: 11px;
+    }
   }
 `;
