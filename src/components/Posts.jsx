@@ -33,7 +33,7 @@ function Posts() {
         <p className="likes">13 likes</p>
       </Sider>
       <Publi>
-        <p className="username" onClick={() => navigate(`/user/${userId}`)}>Juvenal Juvêncio</p>
+        <p className="username" onClick={() => navigate(`/user/`)}>Juvenal Juvêncio</p>
         <p className="text">
           Muito maneiro esse tutorial de Material UI com React, deem uma olhada!{" "}
           <span className="highlight">#react</span>{" "}
