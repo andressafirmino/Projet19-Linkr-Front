@@ -6,6 +6,7 @@ import ProfilePage from "./pages/ProfilePage";
 import { UserDataProvider } from "./context/UserDataContext";
 import { MenuProvider } from "./context/MenuContext";
 import { PostsProvider } from "./context/PostsContext";
+import HashtagPage from "./pages/HashtagPage";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
                 <Route path="/sign-up" element={<SignUpPage />} />
                 <Route path="/timeline" element={<TimeLinePage />} />
                 <Route path="/user/:id" element={<ProfilePage />} />
+                <Route path="/hashtag/:hashtag" element={<HashtagPage />} />
               </Routes>
             </BrowserRouter>
           </PostsProvider>

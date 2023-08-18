@@ -5,11 +5,13 @@ import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import { UserDataContext } from "../context/UserDataContext";
 import axios from "axios";
 import { usePosts } from "../context/PostsContext";
+import { useNavigate } from "react-router-dom";
 
 function Posts({ post, like }) {
   const [liked, setLiked] = useState(like);
   const { userId } = useContext(UserDataContext);
   const { fetchPosts } = usePosts();
+  const navigate = useNavigate();
 
   const handleLikeClick = () => {
     axios
@@ -69,7 +71,7 @@ function Posts({ post, like }) {
         <p className="description">
           {post.description}{" "}
           {post.hashtags.map((hashtag, index) => (
-            <span key={index} className="highlight">
+            <span onClick={() => navigate(`/hashtag/${hashtag}`)} key={index} className="highlight">
               #{hashtag}
             </span>
           ))}
