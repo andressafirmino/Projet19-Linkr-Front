@@ -78,12 +78,12 @@ export default function LoginPage() {
       </ContainerText>
       <ContainerForm>
         <form onSubmit={handleLogin}>
-          <input onChange={handleChange} value={login.email} name='email' placeholder='e-mail' type="email" />
-          <input onChange={handleChange} value={login.password} name='password' placeholder='password' type="password" />
-          <button disabled={isLoading}>{isLoading ? 'Loading...' : 'Log In'}</button>
+          <input data-test="email" onChange={handleChange} value={login.email} name='email' placeholder='e-mail' type="email" />
+          <input data-test="password" onChange={handleChange} value={login.password} name='password' placeholder='password' type="password" />
+          <button data-test="login-btn" disabled={isLoading}>{isLoading ? 'Loading...' : 'Log In'}</button>
 
         </form>
-        <p onClick={() => navigate("/sign-up")}>First time? Create an account!</p>
+        <p data-test="sign-up-link" onClick={() => navigate("/sign-up")}>First time? Create an account!</p>
       </ContainerForm>
     </Conteiner>
   )
