@@ -28,7 +28,7 @@ export default function SearchUser() {
                     setUsersList(response.data)
                 })
                 .catch((e) => {
-                    alert(e.response.data);
+                    alert(e.response);
                 });
         }
     }
@@ -46,7 +46,7 @@ export default function SearchUser() {
             {usersList && (
                 <Suggestions data-test="user-search">
                     {usersList.map(user =>
-                        <div className='suggestion' key={user.id} onClick={() => navigate(`/user/${userId}`)}>
+                        <div className='suggestion' key={user.id} onClick={() => navigate(`/user/${user.id}`)}>
                             <img src={user.image} />
                             <p>{user.username}</p>
                         </div>
