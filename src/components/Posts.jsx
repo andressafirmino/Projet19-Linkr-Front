@@ -66,7 +66,7 @@ function Posts({ post, like }) {
           {post.likes === 1 ? `${post.likes} like` : `${post.likes} likes`}
         </p>
       </Sider>
-      <Publi>
+      <Publi> 
         <p className="username">{post.ownerUsername}</p>
         <p className="description">
           {post.description}{" "}
