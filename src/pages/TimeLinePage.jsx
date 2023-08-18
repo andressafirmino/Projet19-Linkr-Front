@@ -4,18 +4,18 @@ import { MenuContext } from "../context/MenuContext";
 import { styled } from "styled-components";
 import axios from "axios";
 import { UserDataContext } from "../context/UserDataContext";
-import { ThreeDots } from "react-loader-spinner";
 import Posts from "../components/Posts";
+import SearchUser from "../components/Search";
 
 export default function TimeLinePage() {
   const { setOpen, setRotate } = useContext(MenuContext);
-  const { token } = useContext(UserDataContext);
-  const { userId } = useContext(UserDataContext);
+  const { token, userId, userImage } = useContext(UserDataContext);
   const [link, setLink] = useState("");
   const [description, setDescription] = useState("");
   const [disabled, setDisabled] = useState(false);
   const [reload, setReload] = useState(false);
   const [posts, setPosts] = useState([]);
+  const isLargeScreen = window.innerWidth > 611;
 
   // useEffect(() => {
   //   fetchPosts();
@@ -68,10 +68,15 @@ export default function TimeLinePage() {
           setRotate("rotate(0)");
         }}
       >
+        <SearchUser/>
         <Title>
           <p>timeline</p>
         </Title>
-        <BoxPost data-test="publish-box">
+        <PostContainer data-test="publish-box">
+          <BoxImage>
+            <img src={userImage}/>
+          </BoxImage>
+        <BoxPost>
           <p className="question">What are you going to share today?</p>
           <form onSubmit={publicPost}>
             <input
@@ -98,6 +103,7 @@ export default function TimeLinePage() {
             </BoxButton>
           </form>
         </BoxPost>
+        </PostContainer>
         <Posts />
         {/* {posts.map((post) => (
           <Posts key={post.id} post={post} />
@@ -110,11 +116,14 @@ const Windown = styled.div`
   width: 100vw;
   height: 100vh;
   background-color: #333333;
+  padding-top: 10px;
 `;
+
 const Title = styled.div`
   height: 80px;
   display: flex;
   align-items: center;
+  margin-top: 45px;
   margin-left: 17px;
   p {
     font-size: 33px;
@@ -122,12 +131,51 @@ const Title = styled.div`
     font-family: "Oswald", sans-serif;
     color: #ffffff;
   }
+  
+  @media screen and (min-width: 640px) {  
+    width: 611px;
+   margin: 45px auto 0;  
+    p {
+    font-size: 43px;
+  }
+  }
 `;
-const BoxPost = styled.div`
-  width: 100%;
+const PostContainer = styled.div`
+  display: flex;
+  margin: 0 auto;
   height: 164px;
   background-color: #ffffff;
   box-shadow: 0px 4px 4px 0px #00000040;
+  @media screen and (min-width: 611px) {
+    width: 611px;
+    height: 209px;
+    border-radius: 16px;
+    box-shadow: 0px 4px 4px 0px #00000040;
+    margin: 0 auto 16px;
+}
+  @media screen and (min-width: 640px) {
+
+  }
+`
+const BoxImage = styled.div`
+  width: 86px;
+  height: 209px;
+  display: flex;
+  justify-content: center;
+  display: none;
+  padding: 16px;
+  img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }
+  @media screen and (min-width: 611px) {
+    display: inline;
+  }
+`
+const BoxPost = styled.div`
+  width: 100%;
+  height: 164px;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -138,7 +186,7 @@ const BoxPost = styled.div`
   .question {
     width: calc(100vw - 30px);
     height: 35px;
-    margin: 0 auto;
+    margin: 0 auto 10px;
     text-align: center;
     font-size: 17px;
     font-weight: 300;
@@ -154,18 +202,45 @@ const BoxPost = styled.div`
     background-color: #efefef;
     padding: 11px;
     margin-bottom: 5px;
-    ::placeholder {
+  }
+  input::placeholder {
       font-size: 13px;
       font-weight: 300;
       color: #949494;
     }
-  }
+  input:focus{
+    outline: none; 
+   }
   .link {
     height: 30px;
   }
   .description {
     height: 47px;
   }
+  @media screen and (min-width: 611px) {
+    width: 524px; 
+    height: 209px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 0;
+    .question {
+      width: 445px;
+      height: 35px;
+      font: 20px;
+      text-align: left;
+      margin: 0;
+    } 
+    form, input {
+      width: 502px;
+    }
+    input::placeholder{
+      font-size: 15px;
+    }
+    .description{
+      height: 66px;
+    }
+  } 
 `;
 const BoxButton = styled.div`
   width: calc(100vw - 30px);
@@ -183,5 +258,13 @@ const BoxButton = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
+  }
+  @media screen and (min-width: 611px) {
+    width: 502px;
+  }
+  button {
+    height: 31px;
   }
 `;
+

@@ -1,11 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { UserDataContext } from "../context/UserDataContext";
 
 function Posts() {
   const [liked, setLiked] = useState(false);
+  const {userId} = useContext(UserDataContext);
+  const navigate = useNavigate();
 
   const handleLikeClick = () => {
     setLiked(!liked);
@@ -29,7 +33,7 @@ function Posts() {
         <p className="likes">13 likes</p>
       </Sider>
       <Publi>
-        <p className="username">Juvenal Juvêncio</p>
+        <p className="username" onClick={() => navigate(`/user/${userId}`)}>Juvenal Juvêncio</p>
         <p className="text">
           Muito maneiro esse tutorial de Material UI com React, deem uma olhada!{" "}
           <span className="highlight">#react</span>{" "}
