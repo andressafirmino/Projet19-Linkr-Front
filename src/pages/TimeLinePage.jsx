@@ -14,9 +14,8 @@ export default function TimeLinePage() {
   const [link, setLink] = useState("");
   const [description, setDescription] = useState("");
   const [disabled, setDisabled] = useState(false);
-
-  const [posts, setPosts] = useState([]);
   const isLargeScreen = window.innerWidth > 611;
+  const { posts, loading, fetchPosts } = usePosts();
 
   // useEffect(() => {
   //   fetchPosts();
@@ -33,8 +32,6 @@ export default function TimeLinePage() {
   //       console.error("Error fetching posts:", error);
   //     });
   // }
-
-  const { posts, loading, fetchPosts } = usePosts();
 
 
   function publicPost(e) {
@@ -73,42 +70,42 @@ export default function TimeLinePage() {
           setRotate("rotate(0)");
         }}
       >
-        <SearchUser/>
+        <SearchUser />
         <Title>
           <p>timeline</p>
         </Title>
         <PostContainer data-test="publish-box">
           <BoxImage>
-            <img src={userImage}/>
+            <img src={userImage} />
           </BoxImage>
-        <BoxPost>
-          <p className="question">What are you going to share today?</p>
-          <form onSubmit={publicPost}>
-            <input
-              className="link"
-              placeholder="http://..."
-              required
-              value={link}
-              onChange={(e) => setLink(e.target.value)}
-              disabled={disabled}
-              data-test="link"
-            />
-            <input
-              className="description"
-              placeholder="Awesome article about #javascript"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              disabled={disabled}
-              data-test="description"
-            />
-            <BoxButton>
-              <button type="submit" disabled={disabled} data-test="publish-btn">
-                {disabled ? <>Publishing...</> : <>Publish</>}
-              </button>
-            </BoxButton>
-          </form>
-        </BoxPost>
-        </PostContainer>       
+          <BoxPost>
+            <p className="question">What are you going to share today?</p>
+            <form onSubmit={publicPost}>
+              <input
+                className="link"
+                placeholder="http://..."
+                required
+                value={link}
+                onChange={(e) => setLink(e.target.value)}
+                disabled={disabled}
+                data-test="link"
+              />
+              <input
+                className="description"
+                placeholder="Awesome article about #javascript"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                disabled={disabled}
+                data-test="description"
+              />
+              <BoxButton>
+                <button type="submit" disabled={disabled} data-test="publish-btn">
+                  {disabled ? <>Publishing...</> : <>Publish</>}
+                </button>
+              </BoxButton>
+            </form>
+          </BoxPost>
+        </PostContainer>
 
         {posts.length === 0 ? (
           <p className="noPosts">Sem posts até o momento</p>
@@ -172,7 +169,7 @@ const Title = styled.div`
   
   @media screen and (min-width: 640px) {  
     width: 611px;
-   margin: 45px auto 0;  
+    margin: 45px auto 0;  
     p {
     font-size: 43px;
   }
@@ -248,7 +245,7 @@ const BoxPost = styled.div`
     }
   input:focus{
     outline: none; 
-   }
+  }
   .link {
     height: 30px;
   }
