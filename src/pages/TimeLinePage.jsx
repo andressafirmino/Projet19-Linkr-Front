@@ -1,10 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import Header from "../components/Header";
 import { MenuContext } from "../context/MenuContext";
 import { styled } from "styled-components";
 import axios from "axios";
 import { UserDataContext } from "../context/UserDataContext";
 import { ThreeDots } from "react-loader-spinner";
+import { usePosts } from "../context/PostsContext";
 import Posts from "../components/Posts";
 
 export default function TimeLinePage() {
@@ -14,33 +15,7 @@ export default function TimeLinePage() {
   const [link, setLink] = useState("");
   const [description, setDescription] = useState("");
   const [disabled, setDisabled] = useState(false);
-  const [reload, setReload] = useState(false);
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    fetchPosts();
-  }, [reload]);
-  console.log(userId);
-
-  function fetchPosts() {
-    const url = `${process.env.REACT_APP_API_URL}/posts/?userId=${userId}`;
-
-    setLoading(true);
-
-    axios
-      .get(url)
-      .then((response) => {
-        setPosts(response.data);
-        setLoading(false);
-      })
-      .catch((e) => {
-        alert(
-          "Houve uma falha ao obter os posts. Por favor, atualize a página."
-        );
-        console.log(e);
-        setLoading(false);
-      });
-  }
+  const { posts, loading, fetchPosts } = usePosts();
 
   function publicPost(e) {
     e.preventDefault();
@@ -60,7 +35,7 @@ export default function TimeLinePage() {
         setLink("");
         setDescription("");
         setDisabled(false);
-        setReload(true);
+        fetchPosts();
       })
       .catch((e) => {
         alert("Houve um erro ao publicar seu link");
@@ -108,6 +83,7 @@ export default function TimeLinePage() {
             </BoxButton>
           </form>
         </BoxPost>
+
         {posts.length === 0 ? (
           <p className="noPosts">Sem posts até o momento</p>
         ) : (

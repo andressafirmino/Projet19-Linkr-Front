@@ -1,15 +1,49 @@
-import React from "react";
+import React, { useState, useContext, useEffect } from "react";
 import styled from "styled-components";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
-import { useState } from "react";
+import { UserDataContext } from "../context/UserDataContext";
+import axios from "axios";
+import { usePosts } from "../context/PostsContext";
 
 function Posts({ post, like }) {
   const [liked, setLiked] = useState(like);
+  const { userId } = useContext(UserDataContext);
+  const { fetchPosts } = usePosts();
 
   const handleLikeClick = () => {
-    setLiked(!liked);
+    axios
+      .post(`${process.env.REACT_APP_API_URL}/like/${post.id}`, {
+        userId: userId,
+      })
+      .then(() => {
+        setLiked(true);
+        fetchPosts();
+      })
+      .catch((error) => {
+        console.error("Erro ao curtir o post:", error);
+      });
   };
+
+  const handleUnikeClick = () => {
+    axios
+      .delete(`${process.env.REACT_APP_API_URL}/unlike/${post.id}`, {
+        data: {
+          userId: userId,
+        },
+      })
+      .then(() => {
+        setLiked(false);
+        fetchPosts();
+      })
+      .catch((error) => {
+        console.error("Erro ao descurtir o post:", error);
+      });
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
   return (
     <BoxPublication>
@@ -18,7 +52,7 @@ function Posts({ post, like }) {
         {liked ? (
           <FavoriteOutlinedIcon
             className="iconLiked"
-            onClick={handleLikeClick}
+            onClick={handleUnikeClick}
           />
         ) : (
           <FavoriteBorderOutlinedIcon
