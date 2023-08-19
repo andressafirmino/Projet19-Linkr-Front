@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import styled from "styled-components";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
@@ -10,20 +10,18 @@ import { usePosts } from "../context/PostsContext";
 import { useNavigate } from "react-router-dom";
 import Modal from 'react-modal';
 
-
 function Posts({ post, like }) {
   const [liked, setLiked] = useState(like);
   const { userId, token } = useContext(UserDataContext);
   const { fetchPosts } = usePosts();
   const navigate = useNavigate();
 
-
   const [isModalOpen, setIsModalOpen] = useState(false); 
   const [isDeleting, setIsDeleting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedDescription, setEditedDescription] = useState(post.description);
-  const [isEditingModalOpen, setIsEditingModalOpen] = useState(false);
 
+  const textareaRef = useRef(null);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -31,12 +29,6 @@ function Posts({ post, like }) {
   const closeModal = () => {
     setIsModalOpen(false);
   };
-  const openEditingModal = () => {
-    setIsEditingModalOpen(true);
-  };
-  const closeEditingModal = () => {
-    setIsEditingModalOpen(false);
-};
 
   const handleLikeClick = () => {
     axios
@@ -89,12 +81,30 @@ function Posts({ post, like }) {
   };
 
   const handleEditClick = () => {
-    setIsEditing(true);
+    if (!isEditing) {
+      setIsEditing(true);
+      setEditedDescription(post.description);
+      setTimeout(() => {
+        textareaRef.current.focus();
+      }, 0);
+    } else {
+      setIsEditing(false);
+    }
   };
 
+
   const handleCancelEditClick = () => {
-    setIsEditing(false); 
+    setIsEditing(false);
     setEditedDescription(post.description);
+  };
+
+  const handleEditKeyDown = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault(); 
+      handleSaveEditClick(); 
+    } else if (event.key === "Escape") {
+      handleCancelEditClick(); 
+    }
   };
 
   const handleSaveEditClick = () => {
@@ -107,27 +117,11 @@ function Posts({ post, like }) {
       )
       .then(() => {
         fetchPosts();
-        closeEditingModal();
       })
       .catch((error) => {
         console.error("Erro ao salvar a edição:", error);
         alert("Não foi possível salvar as alterações. Tente novamente mais tarde.");
-        closeEditingModal();
       });
-  };
-
-
-  const handleEditKeyPress = (event) => {
-    if (event.key === "Enter") {
-      const newDescription = event.target.value;
-      setIsEditing(false);
-    }
-  };
-
-  const handleEditKeyDown = (event) => {
-    if (event.key === "Escape") {
-      setIsEditing(false);
-    }
   };
 
   useEffect(() => {
@@ -157,19 +151,31 @@ function Posts({ post, like }) {
         <Container>
           <p className="username" onClick={() => navigate(`/user/${post.userId}`)}>{post.ownerUsername}</p>
           <DeleteAndUpdate>
-            <DeleteSharpIcon className="iconDelete" onClick={openModal} />
-            <ModeEditIcon className="iconEdit" onClick={openEditingModal}/>
+            <ModeEditIcon className="iconEdit" onClick={handleEditClick} data-test="edit-btn" />
+            <DeleteSharpIcon className="iconDelete" onClick={openModal} data-test="delete-btn"/>
           </DeleteAndUpdate>
         </Container>
   
-        <p className="description">
-          {post.description}{" "}
-          {post.hashtags.map((hashtag, index) => (
-            <span onClick={() => navigate(`/hashtag/${hashtag}`)} key={index} className="highlight">
-              #{hashtag}
-            </span>
-          ))}
-        </p>
+        {isEditing ? (
+          <textarea
+            ref={textareaRef}
+            value={editedDescription}
+            onChange={(e) => setEditedDescription(e.target.value)}
+            onKeyDown={handleEditKeyDown}
+            rows="4"
+            autoFocus
+            data-test="edit-input"
+          />
+        ) : (
+          <p className="description">
+            {post.description}{" "}
+            {post.hashtags.map((hashtag, index) => (
+              <span onClick={() => navigate(`/hashtag/${hashtag}`)} key={index} className="highlight">
+                #{hashtag}
+              </span>
+            ))}
+          </p>
+        )}
 
         <div className="link">
           <p>{post.link} </p>
@@ -182,37 +188,14 @@ function Posts({ post, like }) {
       >
         <ModalContent>
           <p>Are you sure you want to delete this post?</p>
-          <button onClick={closeModal} disabled={isDeleting}>
+          <button onClick={closeModal} disabled={isDeleting} data-test="cancel">
             No, go back
           </button>
-          <button onClick={handleDeletePost} disabled={isDeleting}>
+          <button onClick={handleDeletePost} disabled={isDeleting} data-test="confirm" >
             {isDeleting ? "Deleting..." : "Yes, delete it"}
           </button>
         </ModalContent>
       </Modal>
-      <Modal
-        isOpen={isEditingModalOpen}
-        onRequestClose={closeEditingModal}
-        contentLabel="Edit Post Modal"
-      >
-        <ModalContent>
-          <textarea
-            value={editedDescription}
-            onChange={(e) => setEditedDescription(e.target.value)}
-            onKeyDown={handleEditKeyDown}
-            rows="4"
-            autoFocus
-          />
-          <button onClick={closeEditingModal} disabled={isEditing}>
-            Cancel
-          </button>
-          <button onClick={handleSaveEditClick} disabled={isEditing}>
-            {isEditing ? "Saving..." : "Save"}
-          </button>
-        </ModalContent>
-      </Modal>
-
-
     </BoxPublication>
   );
 }
