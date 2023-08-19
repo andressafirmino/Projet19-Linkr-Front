@@ -8,12 +8,25 @@ import { UserDataContext } from "../context/UserDataContext";
 import axios from "axios";
 import { usePosts } from "../context/PostsContext";
 import { useNavigate } from "react-router-dom";
+import Modal from 'react-modal';
+
 
 function Posts({ post, like }) {
   const [liked, setLiked] = useState(like);
-  const { userId } = useContext(UserDataContext);
+  const { userId, token } = useContext(UserDataContext);
   const { fetchPosts } = usePosts();
   const navigate = useNavigate();
+
+
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   const handleLikeClick = () => {
     axios
@@ -45,6 +58,26 @@ function Posts({ post, like }) {
       });
   };
 
+    const handleDeletePost = () => {
+    setIsDeleting(true);
+
+    axios
+      .delete(`${process.env.REACT_APP_API_URL}/post/${post.id}`, {
+        headers: { authorization: `Bearer ${token}` },
+      })
+      .then(() => {
+        closeModal();
+        fetchPosts();
+        setIsDeleting(false);
+      })
+      .catch((error) => {
+        console.error("Erro ao deletar o post:", error);
+        closeModal();
+        setIsDeleting(false);
+        alert("Não foi possível excluir o post. Tente novamente mais tarde.");
+      });
+  };
+
   useEffect(() => {
     fetchPosts();
   }, []);
@@ -72,7 +105,7 @@ function Posts({ post, like }) {
         <Container>
           <p className="username" onClick={() => navigate(`/user/${post.userId}`)}>{post.ownerUsername}</p>
           <DeleteAndUpdate>
-            <DeleteSharpIcon className="iconDelete" />
+            <DeleteSharpIcon className="iconDelete" onClick={openModal} />
             <ModeEditIcon className="iconEdit" />
           </DeleteAndUpdate>
         </Container>
@@ -90,6 +123,21 @@ function Posts({ post, like }) {
           <p>{post.link} </p>
         </div>
       </Publi>
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={closeModal}
+        contentLabel="Delete Post Modal"
+      >
+        <ModalContent>
+          <p>Are you sure you want to delete this post?</p>
+          <button onClick={closeModal} disabled={isDeleting}>
+            No, go back
+          </button>
+          <button onClick={handleDeletePost} disabled={isDeleting}>
+            {isDeleting ? "Deleting..." : "Yes, delete it"}
+          </button>
+        </ModalContent>
+      </Modal>
 
     </BoxPublication>
   );
@@ -240,3 +288,43 @@ const DeleteAndUpdate = styled.div`
     color: #ffffff;
   }
 `
+
+const ModalContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: #333333;
+  border-radius: 8px;
+  max-width: 600px;
+
+  p {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+
+  button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    border: none;
+    background-color: #ffffff;
+    color: #1877F2;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+  button:hover{
+    color: #ffffff;
+    background-color: #1877F2;
+  }
+
+  button:first-child {
+    background-color: #e0e0e0;
+    color: #333;
+    margin-right: 10px;
+  }
+`;
+
