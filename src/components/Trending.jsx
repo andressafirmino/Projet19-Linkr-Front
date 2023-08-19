@@ -1,28 +1,35 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-
+import axios from "axios";
 
 export default function Trending() {
-    return (
-        <Container>
-            <Title>
-                <h1>trending</h1>
-            </Title>
-            <TrendingBorder />
-            <TrendingHashtags>
-                <h2># react</h2>
-                <h2># javascript</h2>
-                <h2># css</h2>
-                <h2># html</h2>
-                <h2># python</h2>
-                <h2># node</h2>
-                <h2># express</h2>
-                <h2># mongodb</h2>
-                <h2># postgres</h2>
-                <h2># sql</h2>
-            </TrendingHashtags>
-        </Container>
-    );
+  const [trendingHashtags, setTrendingHashtags] = useState([]);
+
+  useEffect(() => {
+    axios.get(`${process.env.REACT_APP_API_URL}/trending`)
+      .then((response) => {
+        setTrendingHashtags(response.data);
+
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error("Erro ao buscar as hashtags:", error.response.data);
+      });
+  }, []);
+
+  return (
+    <Container>
+      <Title>
+        <h1>trending</h1>
+      </Title>
+      <TrendingBorder />
+      <TrendingHashtags>
+        {trendingHashtags.map((hashtag, index) => (
+          <h2 key={index}>#{hashtag.hashtag}</h2>
+        ))}
+      </TrendingHashtags>
+    </Container>
+  );
 }
 
 const Container = styled.div`

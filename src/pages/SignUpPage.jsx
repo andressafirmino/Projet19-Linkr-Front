@@ -189,7 +189,7 @@ const ContainerForm = styled.div`
 const Conteiner = styled.div`
   display:flex;
 
-  @media (max-width: 390px) {
+  @media (max-width: 640px) {
     display:flex;
     flex-direction:column;
     
@@ -231,8 +231,8 @@ const Conteiner = styled.div`
     }
 
     div:last-child{
-      width: 390px;
-      height:621px;
+      width: auto;
+      /* height:621px; */
 
       padding-top:35px;
 
