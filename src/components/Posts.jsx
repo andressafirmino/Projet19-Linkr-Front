@@ -2,6 +2,8 @@ import React, { useState, useContext, useEffect } from "react";
 import styled from "styled-components";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
+import DeleteSharpIcon from '@mui/icons-material/DeleteSharp';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { UserDataContext } from "../context/UserDataContext";
 import axios from "axios";
 import { usePosts } from "../context/PostsContext";
@@ -66,8 +68,15 @@ function Posts({ post, like }) {
           {post.likes === 1 ? `${post.likes} like` : `${post.likes} likes`}
         </p>
       </Sider>
-      <Publi> 
-        <p className="username" onClick={() => navigate(`/user/${post.userId}`)}>{post.ownerUsername}</p>
+      <Publi>
+        <Container>
+          <p className="username" onClick={() => navigate(`/user/${post.userId}`)}>{post.ownerUsername}</p>
+          <DeleteAndUpdate>
+            <DeleteSharpIcon className="iconDelete" />
+            <ModeEditIcon className="iconEdit" />
+          </DeleteAndUpdate>
+        </Container>
+  
         <p className="description">
           {post.description}{" "}
           {post.hashtags.map((hashtag, index) => (
@@ -81,6 +90,7 @@ function Posts({ post, like }) {
           <p>{post.link} </p>
         </div>
       </Publi>
+
     </BoxPublication>
   );
 }
@@ -209,3 +219,24 @@ const Publi = styled.div`
     }
   }
 `;
+
+const Container = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .username {
+  color: #fff;
+  font-family: Lato;
+  font-size: 17px;
+  font-weight: 400;
+
+}
+`
+const DeleteAndUpdate = styled.div`
+  .iconEdit {
+    color: #ffffff;
+  }
+  .iconDelete {
+    color: #ffffff;
+  }
+`
