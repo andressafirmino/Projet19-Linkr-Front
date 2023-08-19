@@ -20,6 +20,10 @@ function Posts({ post, like }) {
 
   const [isModalOpen, setIsModalOpen] = useState(false); 
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedDescription, setEditedDescription] = useState(post.description);
+  const [isEditingModalOpen, setIsEditingModalOpen] = useState(false);
+
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -27,6 +31,12 @@ function Posts({ post, like }) {
   const closeModal = () => {
     setIsModalOpen(false);
   };
+  const openEditingModal = () => {
+    setIsEditingModalOpen(true);
+  };
+  const closeEditingModal = () => {
+    setIsEditingModalOpen(false);
+};
 
   const handleLikeClick = () => {
     axios
@@ -78,6 +88,48 @@ function Posts({ post, like }) {
       });
   };
 
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleCancelEditClick = () => {
+    setIsEditing(false); 
+    setEditedDescription(post.description);
+  };
+
+  const handleSaveEditClick = () => {
+    setIsEditing(false);
+    axios
+      .put(
+        `${process.env.REACT_APP_API_URL}/post/${post.id}`,
+        { description: editedDescription },
+        { headers: { authorization: `Bearer ${token}` } }
+      )
+      .then(() => {
+        fetchPosts();
+        closeEditingModal();
+      })
+      .catch((error) => {
+        console.error("Erro ao salvar a edição:", error);
+        alert("Não foi possível salvar as alterações. Tente novamente mais tarde.");
+        closeEditingModal();
+      });
+  };
+
+
+  const handleEditKeyPress = (event) => {
+    if (event.key === "Enter") {
+      const newDescription = event.target.value;
+      setIsEditing(false);
+    }
+  };
+
+  const handleEditKeyDown = (event) => {
+    if (event.key === "Escape") {
+      setIsEditing(false);
+    }
+  };
+
   useEffect(() => {
     fetchPosts();
   }, []);
@@ -106,7 +158,7 @@ function Posts({ post, like }) {
           <p className="username" onClick={() => navigate(`/user/${post.userId}`)}>{post.ownerUsername}</p>
           <DeleteAndUpdate>
             <DeleteSharpIcon className="iconDelete" onClick={openModal} />
-            <ModeEditIcon className="iconEdit" />
+            <ModeEditIcon className="iconEdit" onClick={openEditingModal}/>
           </DeleteAndUpdate>
         </Container>
   
@@ -138,6 +190,28 @@ function Posts({ post, like }) {
           </button>
         </ModalContent>
       </Modal>
+      <Modal
+        isOpen={isEditingModalOpen}
+        onRequestClose={closeEditingModal}
+        contentLabel="Edit Post Modal"
+      >
+        <ModalContent>
+          <textarea
+            value={editedDescription}
+            onChange={(e) => setEditedDescription(e.target.value)}
+            onKeyDown={handleEditKeyDown}
+            rows="4"
+            autoFocus
+          />
+          <button onClick={closeEditingModal} disabled={isEditing}>
+            Cancel
+          </button>
+          <button onClick={handleSaveEditClick} disabled={isEditing}>
+            {isEditing ? "Saving..." : "Save"}
+          </button>
+        </ModalContent>
+      </Modal>
+
 
     </BoxPublication>
   );
