@@ -127,7 +127,6 @@ function Posts({ post, like }) {
   useEffect(() => {
     fetchPosts();
   }, []);
-
   return (
     <BoxPublication>
       <Sider>
@@ -150,12 +149,13 @@ function Posts({ post, like }) {
       <Publi>
         <Container>
           <p className="username" onClick={() => navigate(`/user/${post.userId}`)}>{post.ownerUsername}</p>
+          {`${post.userId}` === userId && (
           <DeleteAndUpdate>
             <ModeEditIcon className="iconEdit" onClick={handleEditClick} data-test="edit-btn" />
-            <DeleteSharpIcon className="iconDelete" onClick={openModal} data-test="delete-btn"/>
+            <DeleteSharpIcon className="iconDelete" onClick={openModal} data-test="delete-btn" />
           </DeleteAndUpdate>
+          )}
         </Container>
-  
         {isEditing ? (
           <textarea
             ref={textareaRef}
