@@ -124,6 +124,17 @@ function Posts({ post, like }) {
       });
   };
 
+  const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+  },
+};
+
   useEffect(() => {
     fetchPosts();
   }, []);
@@ -185,6 +196,7 @@ function Posts({ post, like }) {
         isOpen={isModalOpen}
         onRequestClose={closeModal}
         contentLabel="Delete Post Modal"
+        style={customStyles}
       >
         <ModalContent>
           <p>Are you sure you want to delete this post?</p>
@@ -384,4 +396,6 @@ const ModalContent = styled.div`
     margin-right: 10px;
   }
 `;
+
+
 
