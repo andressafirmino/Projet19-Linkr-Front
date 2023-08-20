@@ -1,15 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
 import axios from "axios";
+import { Link } from "react-router-dom";
+import { HashtagContext } from "../context/HashtagContext";
 
-export default function Trending() {
-  const [trendingHashtags, setTrendingHashtags] = useState([]);
+export default function Trending({props}) {
+  const [ trendingHashtags, setTrendingHashtags ] = useState([]);
+  const { tags, setTags } = useContext(HashtagContext);
 
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_API_URL}/trending`)
       .then((response) => {
         setTrendingHashtags(response.data);
-
+        
         console.log(response.data);
       })
       .catch((error) => {
@@ -18,15 +21,21 @@ export default function Trending() {
   }, []);
 
   return (
-    <Container>
+    <Container data-test="trending">
       <Title>
         <h1>trending</h1>
       </Title>
       <TrendingBorder />
       <TrendingHashtags>
-        {trendingHashtags.map((hashtag, index) => (
-          <h2 key={index}>#{hashtag.hashtag}</h2>
-        ))}
+      {trendingHashtags.map((hashtag, index) => (
+        <Link
+          onClick={() => setTags(tags + 1)}
+          to={`/hashtag/${hashtag.hashtag}`}
+          key={index}
+        >
+          <h2 data-test="hashtag">#{hashtag.hashtag}</h2>
+        </Link>
+      ))}
       </TrendingHashtags>
     </Container>
   );

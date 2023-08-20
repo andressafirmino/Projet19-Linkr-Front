@@ -51,32 +51,36 @@ export default function SignUpPage() {
       <ContainerForm>
         <form onSubmit={handleSignUp}>
           <input
+            data-test="email"
             placeholder="e-mail"
             type="text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <input
+            data-test="password"
             placeholder="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
           <input
+            data-test="username"
             placeholder="username"
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
           <input
+            data-test="picture-url"
             placeholder="picture url"
             type="text"
             value={image}
             onChange={(e) => setImage(e.target.value)}
           />
-          <button disabled={isLoading}>{isLoading ? 'Signing Up...' : 'Sign Up'}</button>
+          <button data-test="sign-up-btn" disabled={isLoading}>{isLoading ? 'Signing Up...' : 'Sign Up'}</button>
         </form>
-        <p onClick={() => navigate('/')}>Switch back to Log In</p>
+        <p data-test="login-link" onClick={() => navigate('/')}>Switch back to Log In</p>
       </ContainerForm>
     </Conteiner>
   );
