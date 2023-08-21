@@ -39,7 +39,7 @@ export default function HashtagPage() {
           setOpen("none");
           setRotate("rotate(0)");
         }}>
-        <Title>
+        <Title data-test="hashtag-title">
           <p># {hashtag}</p>
         </Title>
         <Content>
