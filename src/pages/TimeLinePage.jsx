@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Header from "../components/Header";
 import { MenuContext } from "../context/MenuContext";
 import { styled } from "styled-components";
@@ -15,30 +15,17 @@ export default function TimeLinePage() {
   const [link, setLink] = useState("");
   const [description, setDescription] = useState("");
   const [disabled, setDisabled] = useState(false);
-  const isLargeScreen = window.innerWidth > 611;
   const { posts, loading, fetchPosts } = usePosts();
 
-  // useEffect(() => {
-  //   fetchPosts();
-  // }, [reload]);
 
-  // function fetchPosts() {
-  //   const url = `${process.env.REACT_APP_API_URL}/posts`;
-  //   axios
-  //     .get(url)
-  //     .then((response) => {
-  //       setPosts(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching posts:", error);
-  //     });
-  // }
-
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
   function publicPost(e) {
     e.preventDefault();
 
-    if(link === '') {
+    if (link === '') {
       return alert("Houve um erro ao publicar seu link")
     }
 
