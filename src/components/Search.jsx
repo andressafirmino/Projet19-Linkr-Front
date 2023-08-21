@@ -67,6 +67,7 @@ const SearchContainer = styled.div`
     top: 82px;
     left: 50%;
     transform: translate(-50%, 0);
+    z-index: 10;
     @media screen and (min-width: 563px){
         width: calc(100vw - 150px);
         max-width: 563px;

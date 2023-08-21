@@ -118,6 +118,7 @@ const Menu = styled.div`
   
   align-items: center;
   justify-content: center;
+  z-index: 20;
 
   p{
     color: #FFF;
