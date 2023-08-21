@@ -10,8 +10,8 @@ import { usePosts } from "../context/PostsContext";
 import { useNavigate } from "react-router-dom";
 import Modal from 'react-modal';
 
-function Posts({ post, like }) {
-  const [liked, setLiked] = useState(like);
+function Posts({ post }) {
+  const [liked, setLiked] = useState(post.liked);
   const { userId, token } = useContext(UserDataContext);
   const { fetchPosts } = usePosts();
   const navigate = useNavigate();

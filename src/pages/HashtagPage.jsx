@@ -13,7 +13,7 @@ export default function HashtagPage() {
   const { hashtag } = useParams();
   const { userId } = useContext(UserDataContext);
   const { setOpen, setRotate } = useContext(MenuContext);
-  const { tags, setTags } = useContext(HashtagContext);
+  const { tags } = useContext(HashtagContext);
   const [postsByTag, setPostsByTag] = useState([]);
 
   async function getPostByTag() {
