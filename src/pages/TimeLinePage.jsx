@@ -55,7 +55,6 @@ export default function TimeLinePage() {
     <PageContainer>
       {loading ? <p>Carregando...</p> : null}
       <Header />
-      {/* <SearchUser /> */}
 
       <Windown
         onClick={() => {
@@ -170,7 +169,7 @@ const Title = styled.div`
   
   @media screen and (min-width: 640px) {  
     width: 611px;
-    margin: 45px auto 0;  
+    margin: 50px auto 0;  
     p {
     font-size: 43px;
   }
