@@ -24,7 +24,7 @@ export default function SignUpPage() {
     const user = { email, password, username, image };
     setIsLoading(true);
 
-    const url = "http://localhost:5000/sign-up";
+    const url = `${process.env.REACT_APP_API_URL}/sign-up`;
 
     try {
       const res = await axios.post(`${url}`, user);
@@ -45,8 +45,8 @@ export default function SignUpPage() {
   return (
     <Conteiner>
       <ContainerText>
-          <h1>linkr</h1>
-          <h2>save, share and discover the best links on the web</h2>
+        <h1>linkr</h1>
+        <h2>save, share and discover the best links on the web</h2>
       </ContainerText>
       <ContainerForm>
         <form onSubmit={handleSignUp}>
