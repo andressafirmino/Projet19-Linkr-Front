@@ -1,28 +1,44 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
+import axios from "axios";
+import { Link } from "react-router-dom";
+import { HashtagContext } from "../context/HashtagContext";
 
+export default function Trending({props}) {
+  const [ trendingHashtags, setTrendingHashtags ] = useState([]);
+  const { tags, setTags } = useContext(HashtagContext);
 
-export default function Trending() {
-    return (
-        <Container>
-            <Title>
-                <h1>trending</h1>
-            </Title>
-            <TrendingBorder />
-            <TrendingHashtags>
-                <h2># react</h2>
-                <h2># javascript</h2>
-                <h2># css</h2>
-                <h2># html</h2>
-                <h2># python</h2>
-                <h2># node</h2>
-                <h2># express</h2>
-                <h2># mongodb</h2>
-                <h2># postgres</h2>
-                <h2># sql</h2>
-            </TrendingHashtags>
-        </Container>
-    );
+  useEffect(() => {
+    axios.get(`${process.env.REACT_APP_API_URL}/trending`)
+      .then((response) => {
+        setTrendingHashtags(response.data);
+        
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error("Erro ao buscar as hashtags:", error.response.data);
+      });
+  }, []);
+
+  return (
+    <Container data-test="trending">
+      <Title>
+        <h1>trending</h1>
+      </Title>
+      <TrendingBorder />
+      <TrendingHashtags>
+      {trendingHashtags.map((hashtag, index) => (
+        <Link
+          onClick={() => setTags(tags + 1)}
+          to={`/hashtag/${hashtag.hashtag}`}
+          key={index}
+        >
+          <h2 data-test="hashtag">#{hashtag.hashtag}</h2>
+        </Link>
+      ))}
+      </TrendingHashtags>
+    </Container>
+  );
 }
 
 const Container = styled.div`

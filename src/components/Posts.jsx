@@ -1,17 +1,34 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import styled from "styled-components";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
+import DeleteSharpIcon from '@mui/icons-material/DeleteSharp';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { UserDataContext } from "../context/UserDataContext";
 import axios from "axios";
 import { usePosts } from "../context/PostsContext";
 import { useNavigate } from "react-router-dom";
+import Modal from 'react-modal';
 
 function Posts({ post, like }) {
   const [liked, setLiked] = useState(like);
-  const { userId } = useContext(UserDataContext);
+  const { userId, token } = useContext(UserDataContext);
   const { fetchPosts } = usePosts();
   const navigate = useNavigate();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedDescription, setEditedDescription] = useState(post.description);
+
+  const textareaRef = useRef(null);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   const handleLikeClick = () => {
     axios
@@ -43,12 +60,86 @@ function Posts({ post, like }) {
       });
   };
 
+  const handleDeletePost = () => {
+    setIsDeleting(true);
+
+    axios
+      .delete(`${process.env.REACT_APP_API_URL}/post/${post.id}`, {
+        headers: { authorization: `Bearer ${token}` },
+      })
+      .then(() => {
+        closeModal();
+        fetchPosts();
+        setIsDeleting(false);
+      })
+      .catch((error) => {
+        console.error("Erro ao deletar o post:", error);
+        closeModal();
+        setIsDeleting(false);
+        alert("Não foi possível excluir o post. Tente novamente mais tarde.");
+      });
+  };
+
+  const handleEditClick = () => {
+    if (!isEditing) {
+      setIsEditing(true);
+      setEditedDescription(post.description);
+      setTimeout(() => {
+        textareaRef.current.focus();
+      }, 0);
+    } else {
+      setIsEditing(false);
+    }
+  };
+
+
+  const handleCancelEditClick = () => {
+    setIsEditing(false);
+    setEditedDescription(post.description);
+  };
+
+  const handleEditKeyDown = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      handleSaveEditClick();
+    } else if (event.key === "Escape") {
+      handleCancelEditClick();
+    }
+  };
+
+  const handleSaveEditClick = () => {
+    setIsEditing(false);
+    axios
+      .put(
+        `${process.env.REACT_APP_API_URL}/post/${post.id}`,
+        { description: editedDescription },
+        { headers: { authorization: `Bearer ${token}` } }
+      )
+      .then(() => {
+        fetchPosts();
+      })
+      .catch((error) => {
+        console.error("Erro ao salvar a edição:", error);
+        alert("Não foi possível salvar as alterações. Tente novamente mais tarde.");
+      });
+  };
+
+  const customStyles = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+    },
+  };
+
   useEffect(() => {
     fetchPosts();
   }, []);
-
   return (
-    <BoxPublication>
+    <BoxPublication data-test="post">
       <Sider>
         <img className="profleImg" src={post.ownerImage} />
         {liked ? (
@@ -66,21 +157,57 @@ function Posts({ post, like }) {
           {post.likes === 1 ? `${post.likes} like` : `${post.likes} likes`}
         </p>
       </Sider>
-      <Publi> 
-        <p className="username" onClick={() => navigate(`/user/${post.userId}`)}>{post.ownerUsername}</p>
-        <p className="description">
-          {post.description}{" "}
-          {post.hashtags.map((hashtag, index) => (
-            <span onClick={() => navigate(`/hashtag/${hashtag}`)} key={index} className="highlight">
-              #{hashtag}
-            </span>
-          ))}
-        </p>
+      <Publi>
+        <Container>
+          <p data-test="username" className="username" onClick={() => navigate(`/user/${post.userId}`)}>{post.ownerUsername}</p>
+          {`${post.userId}` === userId && (
+            <DeleteAndUpdate>
+              <ModeEditIcon className="iconEdit" onClick={handleEditClick} data-test="edit-btn" />
+              <DeleteSharpIcon className="iconDelete" onClick={openModal} data-test="delete-btn" />
+            </DeleteAndUpdate>
+          )}
+        </Container>
+        {isEditing ? (
+          <textarea
+            ref={textareaRef}
+            value={editedDescription}
+            onChange={(e) => setEditedDescription(e.target.value)}
+            onKeyDown={handleEditKeyDown}
+            rows="4"
+            autoFocus
+            data-test="edit-input"
+          />
+        ) : (
+          <p data-test="description" className="description">
+            {post.description}{" "}
+            {post.hashtags.map((hashtag, index) => (
+              <span onClick={() => navigate(`/hashtag/${hashtag}`)} key={index} className="highlight">
+                #{hashtag}
+              </span>
+            ))}
+          </p>
+        )}
 
         <div className="link">
-          <p>{post.link} </p>
+          <p data-test="link">{post.link} </p>
         </div>
       </Publi>
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={closeModal}
+        contentLabel="Delete Post Modal"
+        style={customStyles}
+      >
+        <ModalContent>
+          <p>Are you sure you want to delete this post?</p>
+          <button onClick={closeModal} disabled={isDeleting} data-test="cancel">
+            No, go back
+          </button>
+          <button onClick={handleDeletePost} disabled={isDeleting} data-test="confirm" >
+            {isDeleting ? "Deleting..." : "Yes, delete it"}
+          </button>
+        </ModalContent>
+      </Modal>
     </BoxPublication>
   );
 }
@@ -209,3 +336,66 @@ const Publi = styled.div`
     }
   }
 `;
+
+const Container = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .username {
+  color: #fff;
+  font-family: Lato;
+  font-size: 17px;
+  font-weight: 400;
+
+}
+`
+const DeleteAndUpdate = styled.div`
+  .iconEdit {
+    color: #ffffff;
+  }
+  .iconDelete {
+    color: #ffffff;
+  }
+`
+
+const ModalContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: #333333;
+  border-radius: 8px;
+  max-width: 600px;
+
+  p {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+
+  button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    border: none;
+    background-color: #ffffff;
+    color: #1877F2;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+  button:hover{
+    color: #ffffff;
+    background-color: #1877F2;
+  }
+
+  button:first-child {
+    background-color: #e0e0e0;
+    color: #333;
+    margin-right: 10px;
+  }
+`;
+
+
+
