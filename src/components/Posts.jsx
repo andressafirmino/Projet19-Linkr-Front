@@ -188,8 +188,17 @@ function Posts({ post }) {
           </p>
         )}
 
-        <div className="link">
-          <a href={post.link} target="blank" data-test="link">{post.link} </a>
+        <div className="link" data-test="link">
+          <a href={post.link} target="_blank" rel="noopener noreferrer">
+            <div className="linkText">
+              <h2> {urlData.title}</h2>
+              <p>{urlData.description}</p>
+              <p>{post.link}</p>
+            </div>
+            <div className="linkImage">
+              <img src={urlData.image} alt="linkImage" />
+            </div>
+          </a>
         </div>
       </Publi>
       <Modal
