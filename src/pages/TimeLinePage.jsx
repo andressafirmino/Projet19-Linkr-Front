@@ -10,7 +10,7 @@ import SearchUser from "../components/Search";
 import Trending from "../components/Trending";
 
 export default function TimeLinePage() {
-  const { setOpen, setRotate } = useContext(MenuContext);
+  const { setOpen, setRotate, setClosedSearch } = useContext(MenuContext);
   const { token, userId, userImage } = useContext(UserDataContext);
   const [link, setLink] = useState("");
   const [description, setDescription] = useState("");
@@ -59,6 +59,7 @@ export default function TimeLinePage() {
         onClick={() => {
           setOpen("none");
           setRotate("rotate(0)");
+          setClosedSearch("none");
         }}
       >
         <SearchUser />

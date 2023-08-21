@@ -4,9 +4,11 @@ import { DebounceInput } from 'react-debounce-input';
 import axios from 'axios';
 import { UserDataContext } from "../context/UserDataContext";
 import { useNavigate, useRevalidator } from 'react-router-dom';
+import { MenuContext } from '../context/MenuContext';
 
 export default function SearchUser() {
 
+    const {closedSearch, setClosedSearch} = useContext(MenuContext);
     const { token, userId } = useContext(UserDataContext);
     const [usersList, setUsersList] = useState([]);
     const [searchText, setSearchText] = useState('');
@@ -24,8 +26,9 @@ export default function SearchUser() {
                 params: { user: user }
             })
                 .then((response) => {
+                    setClosedSearch("block");
                     console.log(response.data);
-                    setUsersList(response.data)
+                    setUsersList(response.data);
                 })
                 .catch((e) => {
                     alert(e.response);
@@ -35,7 +38,7 @@ export default function SearchUser() {
 
     return (
         <SearchContainer>
-            <BoxSearch data-test="search">
+            <BoxSearch data-test="search" onMouseUp={() => setClosedSearch("block")}>
                 <DebounceInput type="text" placeholder="Search for people and friends" debounceTimeout={300}
                     onChange={(e) => { handleSearch(e.target.value); setSearchText(e.target.value) }} value={searchText} />
                 <button type="button"><ion-icon name="search-outline"></ion-icon></button>
@@ -44,9 +47,9 @@ export default function SearchUser() {
                 <></>
             )}
             {usersList && (
-                <Suggestions >
+                <Suggestions style={{display: closedSearch}}>
                     {usersList.map(user =>
-                        <div className='suggestion' key={user.id} onClick={() => navigate(`/user/${user.id}`)} data-test="user-search">
+                        <div className='suggestion' key={user.id} onClick={() => navigate(`/user/${user.id}`)} data-test="user-search" >
                             <img src={user.image} />
                             <p>{user.username}</p>
                         </div>
