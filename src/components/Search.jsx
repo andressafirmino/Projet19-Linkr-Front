@@ -14,7 +14,7 @@ export default function SearchUser() {
 
     function handleSearch(searchValue) {
         const user = searchValue;
-        if (searchText.length < 4) {
+        if (user.length < 3) {
             setUsersList([]);
         }
         if (user.length >= 3) {
@@ -44,9 +44,9 @@ export default function SearchUser() {
                 <></>
             )}
             {usersList && (
-                <Suggestions data-test="user-search">
+                <Suggestions >
                     {usersList.map(user =>
-                        <div className='suggestion' key={user.id} onClick={() => navigate(`/user/${user.id}`)}>
+                        <div className='suggestion' key={user.id} onClick={() => navigate(`/user/${user.id}`)} data-test="user-search">
                             <img src={user.image} />
                             <p>{user.username}</p>
                         </div>
@@ -67,6 +67,7 @@ const SearchContainer = styled.div`
     top: 82px;
     left: 50%;
     transform: translate(-50%, 0);
+    z-index: 10;
     @media screen and (min-width: 563px){
         width: calc(100vw - 150px);
         max-width: 563px;

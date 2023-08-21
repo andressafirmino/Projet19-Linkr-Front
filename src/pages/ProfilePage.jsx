@@ -83,6 +83,8 @@ const ProfileContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
+  width: 100%;
+  max-width: 600px;
 `;
 
 const Window = styled.div`
