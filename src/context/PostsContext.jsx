@@ -9,14 +9,16 @@ export function PostsProvider({ children }) {
   const [loading, setLoading] = useState(false);
   const { userId } = useContext(UserDataContext);
 
+
   async function fetchPosts() {
     const url = `${process.env.REACT_APP_API_URL}/posts/?userId=${userId}`;
 
     setLoading(true);
-
+    console.log(posts);
     try {
       const response = await axios.get(url);
-      setPosts(response.data);
+      const allPosts = response.data;
+      setPosts(allPosts.slice(0, 20));
     } catch (error) {
       alert("Houve uma falha ao obter os posts. Por favor, atualize a página.");
       console.error(error);

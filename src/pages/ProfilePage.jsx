@@ -12,7 +12,7 @@ import { useParams } from "react-router-dom";
 export default function ProfilePage() {
   const { setOpen, setRotate } = useContext(MenuContext);
   const { id } = useParams();
-  const { posts, loading: postsLoading, fetchPosts } = usePosts();
+  const { posts, fetchPosts } = usePosts();
   const [userProfile, setUserProfile] = useState(null);
 
 
@@ -55,10 +55,10 @@ export default function ProfilePage() {
       ) : null}
       <Window>
         <ProfileContainer>
-          {userProfile && !postsLoading && userPosts.length === 0 ? (
+          {userProfile && userPosts.length === 0 ? (
             <p className="noPosts">Sem posts até o momento</p>
           ) : null}
-          {userProfile && !postsLoading
+          {userProfile
             ? userPosts.map((post) => (
                 <Posts key={post.id} post={post} like={post.liked} />
               ))
