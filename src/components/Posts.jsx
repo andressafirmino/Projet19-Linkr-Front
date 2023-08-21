@@ -156,7 +156,7 @@ function Posts({ post }) {
   return (
     <BoxPublication data-test="post">
       <Sider>
-        <img className="profleImg" src={post.ownerImage} />
+        <img className="profleImg" src={post.ownerImage} alt="ownerImage"/>
         {liked ? (
           <FavoriteOutlinedIcon
             className="iconLiked"
@@ -203,8 +203,17 @@ function Posts({ post }) {
           </p>
         )}
 
-        <div className="link">
-          <p data-test="link">{postLink.title} </p>
+        <div className="link" data-test="link">
+          <a href={post.link} target="_blank" rel="noopener noreferrer">
+            <div className="linkText">
+              <h2> {postLink.title}</h2>
+              <p>{postLink.description}</p>
+              <p>{post.link}</p>
+            </div>
+            <div className="linkImage">
+              <img src={postLink.image} alt="linkImage"/>
+            </div>
+            </a>
         </div>
       </Publi>
       <Modal
@@ -321,6 +330,7 @@ const Publi = styled.div`
     height: 115px;
 
     display: flex;
+    
 
     border: 1px solid #4d4d4d;
     border-radius: 11px;
@@ -330,7 +340,6 @@ const Publi = styled.div`
     overflow: hidden;
 
     p {
-      width: calc(100% - 22px);
       color: #cecece;
       font-family: Lato;
       font-size: 9px;
