@@ -37,6 +37,10 @@ export default function TimeLinePage() {
   function publicPost(e) {
     e.preventDefault();
 
+    if(link === '') {
+      return alert("Houve um erro ao publicar seu link")
+    }
+
     setDisabled(true);
     const url = `${process.env.REACT_APP_API_URL}/timeline`;
     const body = {
@@ -84,7 +88,6 @@ export default function TimeLinePage() {
               <input
                 className="link"
                 placeholder="http://..."
-                required
                 value={link}
                 onChange={(e) => setLink(e.target.value)}
                 disabled={disabled}
