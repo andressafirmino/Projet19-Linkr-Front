@@ -35,12 +35,12 @@ export default function Header() {
               }
             }}>
               <ion-icon style={{ transform: rotate }} name="chevron-down-outline"></ion-icon>
-              <img src={userImage} alt="UserImg" />
+              <img data-test="avatar" src={userImage} alt="UserImg" />
             </div>
           </div>
         </Conteiner>
-        <Menu style={{ display: open }}>
-          <p onClick={() => {
+        <Menu data-test="menu" style={{ display: open }}>
+          <p data-test="logout" onClick={() => {
             localStorage.removeItem('token');
             localStorage.removeItem('userImage');
             localStorage.removeItem('userId');
