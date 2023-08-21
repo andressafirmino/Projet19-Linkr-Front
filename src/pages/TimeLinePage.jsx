@@ -17,7 +17,6 @@ export default function TimeLinePage() {
   const [disabled, setDisabled] = useState(false);
   const { posts, loading, fetchPosts } = usePosts();
 
-
   useEffect(() => {
     fetchPosts();
   }, []);
