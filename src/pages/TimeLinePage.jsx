@@ -25,7 +25,7 @@ export default function TimeLinePage() {
     e.preventDefault();
 
     if (link === '') {
-      return alert("Houve um erro ao publicar seu link")
+      return alert("There was an error publishing your link")
     }
 
     setDisabled(true);
@@ -46,7 +46,7 @@ export default function TimeLinePage() {
         fetchPosts();
       })
       .catch((e) => {
-        alert("Houve um erro ao publicar seu link");
+        alert("There was an error publishing your link");
         setDisabled(false);
       });
   }
