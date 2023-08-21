@@ -14,30 +14,12 @@ export default function TimeLinePage() {
   const [link, setLink] = useState("");
   const [description, setDescription] = useState("");
   const [disabled, setDisabled] = useState(false);
-  const isLargeScreen = window.innerWidth > 611;
   const { posts, loading, fetchPosts } = usePosts();
-
-  // useEffect(() => {
-  //   fetchPosts();
-  // }, [reload]);
-
-  // function fetchPosts() {
-  //   const url = `${process.env.REACT_APP_API_URL}/posts`;
-  //   axios
-  //     .get(url)
-  //     .then((response) => {
-  //       setPosts(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching posts:", error);
-  //     });
-  // }
-
 
   function publicPost(e) {
     e.preventDefault();
 
-    if(link === '') {
+    if (link === '') {
       return alert("Houve um erro ao publicar seu link")
     }
 
