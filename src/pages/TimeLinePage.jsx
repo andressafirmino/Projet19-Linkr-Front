@@ -55,6 +55,8 @@ export default function TimeLinePage() {
     <PageContainer>
       {loading ? <p>Carregando...</p> : null}
       <Header />
+      {/* <SearchUser /> */}
+
       <Windown
         onClick={() => {
           setOpen("none");
@@ -62,7 +64,6 @@ export default function TimeLinePage() {
           setClosedSearch("none");
         }}
       >
-        <SearchUser />
         <Title>
           <p>timeline</p>
         </Title>
