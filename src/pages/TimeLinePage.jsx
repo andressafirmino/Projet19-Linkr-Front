@@ -102,7 +102,7 @@ export default function TimeLinePage() {
             </PostContainer>
             <PostList>
               {posts.length === 0 ? (
-                <p className="noPosts" data-test="message" >Sem posts até o momento</p>
+                <p className="noPosts" data-test="message">There are no posts yet</p>
               ) : (
                 posts.map((post) => (
                   <Posts key={post.id} post={post} like={post.liked} />
