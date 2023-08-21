@@ -25,7 +25,7 @@ export default function TimeLinePage() {
     e.preventDefault();
 
     if (link === '') {
-      return alert("Houve um erro ao publicar seu link")
+      return alert("There was an error publishing your link")
     }
 
     setDisabled(true);
@@ -46,7 +46,7 @@ export default function TimeLinePage() {
         fetchPosts();
       })
       .catch((e) => {
-        alert("Houve um erro ao publicar seu link");
+        alert("There was an error publishing your link");
         setDisabled(false);
       });
   }
@@ -55,6 +55,7 @@ export default function TimeLinePage() {
     <PageContainer>
       {loading ? <p>Carregando...</p> : null}
       <Header />
+
       <Windown
         onClick={() => {
           setOpen("none");
@@ -62,7 +63,6 @@ export default function TimeLinePage() {
           setClosedSearch("none");
         }}
       >
-        <SearchUser />
         <Title>
           <p>timeline</p>
         </Title>
@@ -169,7 +169,7 @@ const Title = styled.div`
   
   @media screen and (min-width: 640px) {  
     width: 611px;
-    margin: 45px auto 0;  
+    margin: 50px auto 0;  
     p {
     font-size: 43px;
   }
