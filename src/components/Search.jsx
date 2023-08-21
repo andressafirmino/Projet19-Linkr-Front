@@ -4,58 +4,67 @@ import { DebounceInput } from 'react-debounce-input';
 import axios from 'axios';
 import { UserDataContext } from "../context/UserDataContext";
 import { useNavigate, useRevalidator } from 'react-router-dom';
+import { MenuContext } from '../context/MenuContext';
 
 export default function SearchUser() {
 
-    const { token, userId } = useContext(UserDataContext);
-    const [usersList, setUsersList] = useState([]);
-    const [searchText, setSearchText] = useState('');
-    const navigate = useNavigate();
+  const { closedSearch, setClosedSearch } = useContext(MenuContext);
+  const { token, userId } = useContext(UserDataContext);
+  const [usersList, setUsersList] = useState([]);
+  const [searchText, setSearchText] = useState('');
+  const navigate = useNavigate();
 
-    function handleSearch(searchValue) {
-        const user = searchValue;
-        if (user.length < 3) {
-            setUsersList([]);
-        }
-        if (user.length >= 3) {
-            const url = `${process.env.REACT_APP_API_URL}/search`;
-            axios.get(url, {
-                headers: { authorization: `Bearer ${token}` },
-                params: { user: user }
-            })
-                .then((response) => {
-                    console.log(response.data);
-                    setUsersList(response.data)
-                })
-                .catch((e) => {
-                    alert(e.response);
-                });
-        }
+  function handleSearch(searchValue) {
+    const user = searchValue;
+    if (user.length < 3) {
+      setUsersList([]);
     }
+    if (user.length >= 3) {
+      const url = `${process.env.REACT_APP_API_URL}/search`;
+      axios.get(url, {
+        headers: { authorization: `Bearer ${token}` },
+        params: { user: user }
+      })
+        .then((response) => {
+          setClosedSearch("block");
+          console.log(response.data);
+          setUsersList(response.data);
+        })
+        .catch((e) => {
+          alert(e.response);
+        });
+    }
+  }
 
-    return (
-        <SearchContainer>
-            <BoxSearch data-test="search">
-                <DebounceInput type="text" placeholder="Search for people and friends" debounceTimeout={300}
-                    onChange={(e) => { handleSearch(e.target.value); setSearchText(e.target.value) }} value={searchText} />
-                <button type="button"><ion-icon name="search-outline"></ion-icon></button>
-            </BoxSearch>
-            {!usersList && usersList.length === 0 && (
-                <></>
-            )}
-            {usersList && (
-                <Suggestions >
-                    {usersList.map(user =>
-                        <div className='suggestion' key={user.id} onClick={() => navigate(`/user/${user.id}`)} data-test="user-search">
-                            <img src={user.image} />
-                            <p>{user.username}</p>
-                        </div>
-                    )}
-                </Suggestions>
-            )}
+  return (
+    <SearchContainer>
+      <BoxSearch data-test="search" onClick={() => {
+        if (closedSearch === "none")
+          setClosedSearch("block")
+        else {
+          setClosedSearch("none")
+        }
+      }}>
+        <DebounceInput type="text" placeholder="Search for people and friends" debounceTimeout={300}
+          onChange={(e) => { handleSearch(e.target.value); setSearchText(e.target.value) }} value={searchText} />
+        <button type="button"><ion-icon name="search-outline"></ion-icon></button>
+      </BoxSearch>
+      {!usersList && usersList.length === 0 && (
+        <></>
+      )}
+      {usersList && (
+        <Suggestions style={{ display: closedSearch }}>
+          {usersList.map(user =>
+            <div className='suggestion' key={user.id} onClick={() => navigate(`/user/${user.id}`)} data-test="user-search" >
+              <img src={user.image} />
+              <p>{user.username}</p>
+            </div>
+          )}
+        </Suggestions>
+      )}
 
-        </SearchContainer>
-    )
+    </SearchContainer>
+  )
 }
 
 const SearchContainer = styled.div`
@@ -67,7 +76,11 @@ const SearchContainer = styled.div`
     top: 82px;
     left: 50%;
     transform: translate(-50%, 0);
-    z-index: 10;
+    z-index: 1;
+
+    display:flex;
+    flex-direction:column;
+
     @media screen and (min-width: 563px){
         width: calc(100vw - 150px);
         max-width: 563px;
@@ -135,6 +148,7 @@ const Suggestions = styled.div`
     .suggestion {
         display: flex;
         align-items: center;
+        justify-content:flex-start;
         cursor: pointer;
         img{
             width: 39px;

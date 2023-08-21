@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { UserDataContext } from '../context/UserDataContext';
 import { MenuContext } from '../context/MenuContext';
 import { usePosts } from "../context/PostsContext";
+import SearchUser from "../components/Search";
 
 
 export default function Header() {
@@ -22,6 +23,8 @@ export default function Header() {
             navigate("/timeline")
           }}>linkr</p>
           <div>
+            <SearchUser />
+
             <div onMouseUp={() => {
               if (open === "none") {
                 setOpen("flex")
@@ -61,6 +64,7 @@ const Head = styled.div`
   position:fixed;
   top:0px;
   left:0px;
+  z-index:2;
 `
 const Shadow = styled.div`
   height: 72px;
@@ -122,7 +126,7 @@ const Menu = styled.div`
   
   align-items: center;
   justify-content: center;
-  z-index: 20;
+  z-index: 2;
 
   p{
     color: #FFF;

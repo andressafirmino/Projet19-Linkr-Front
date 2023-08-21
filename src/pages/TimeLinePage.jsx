@@ -10,7 +10,7 @@ import SearchUser from "../components/Search";
 import Trending from "../components/Trending";
 
 export default function TimeLinePage() {
-  const { setOpen, setRotate } = useContext(MenuContext);
+  const { setOpen, setRotate, setClosedSearch } = useContext(MenuContext);
   const { token, userId, userImage } = useContext(UserDataContext);
   const [link, setLink] = useState("");
   const [description, setDescription] = useState("");
@@ -55,13 +55,14 @@ export default function TimeLinePage() {
     <PageContainer>
       {loading ? <p>Carregando...</p> : null}
       <Header />
+
       <Windown
         onClick={() => {
           setOpen("none");
           setRotate("rotate(0)");
+          setClosedSearch("none");
         }}
       >
-        <SearchUser />
         <Title>
           <p>timeline</p>
         </Title>
@@ -168,7 +169,7 @@ const Title = styled.div`
   
   @media screen and (min-width: 640px) {  
     width: 611px;
-    margin: 45px auto 0;  
+    margin: 50px auto 0;  
     p {
     font-size: 43px;
   }
