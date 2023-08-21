@@ -189,7 +189,7 @@ function Posts({ post }) {
         )}
 
         <div className="link">
-          <p data-test="link">{post.link} </p>
+          <a href={post.link} target="blank" data-test="link">{post.link} </a>
         </div>
       </Publi>
       <Modal
@@ -314,7 +314,7 @@ const Publi = styled.div`
 
     overflow: hidden;
 
-    p {
+    a {
       width: calc(100% - 22px);
       color: #cecece;
       font-family: Lato;
