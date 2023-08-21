@@ -24,7 +24,7 @@ export default function SignUpPage() {
     const user = { email, password, username, image };
     setIsLoading(true);
 
-    const url = "http://localhost:5000/sign-up";
+    const url = `${process.env.REACT_APP_API_URL}/sign-up`;
 
     try {
       const res = await axios.post(`${url}`, user);
@@ -32,7 +32,7 @@ export default function SignUpPage() {
 
       navigate('/');
     } catch (error) {
-      if (error.response && error.response.status === 409) {
+      if (error.response.status === 409) {
         alert('Já existe um usuário cadastrado com esse email!');
       } else {
         alert('Erro ao cadastrar! Tente novamente.');
@@ -45,38 +45,42 @@ export default function SignUpPage() {
   return (
     <Conteiner>
       <ContainerText>
-          <h1>linkr</h1>
-          <h2>save, share and discover the best links on the web</h2>
+        <h1>linkr</h1>
+        <h2>save, share and discover the best links on the web</h2>
       </ContainerText>
       <ContainerForm>
         <form onSubmit={handleSignUp}>
           <input
+            data-test="email"
             placeholder="e-mail"
             type="text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <input
+            data-test="password"
             placeholder="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
           <input
+            data-test="username"
             placeholder="username"
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
           <input
+            data-test="picture-url"
             placeholder="picture url"
             type="text"
             value={image}
             onChange={(e) => setImage(e.target.value)}
           />
-          <button disabled={isLoading}>{isLoading ? 'Signing Up...' : 'Sign Up'}</button>
+          <button data-test="sign-up-btn" disabled={isLoading}>{isLoading ? 'Signing Up...' : 'Sign Up'}</button>
         </form>
-        <p onClick={() => navigate('/')}>Switch back to Log In</p>
+        <p data-test="login-link" onClick={() => navigate('/')}>Switch back to Log In</p>
       </ContainerForm>
     </Conteiner>
   );

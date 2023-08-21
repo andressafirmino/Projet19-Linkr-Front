@@ -5,14 +5,16 @@ import { styled } from 'styled-components'
 import Header from '../components/Header';
 import { MenuContext } from "../context/MenuContext";
 import { UserDataContext } from '../context/UserDataContext';
+import { HashtagContext } from '../context/HashtagContext';
 import Posts from '../components/Posts';
-
+import Trending from '../components/Trending';
 
 export default function HashtagPage() {
   const { hashtag } = useParams();
   const { userId } = useContext(UserDataContext);
   const { setOpen, setRotate } = useContext(MenuContext);
-  const [postsByTag, setPostsByTag] = useState([])
+  const { tags } = useContext(HashtagContext);
+  const [postsByTag, setPostsByTag] = useState([]);
 
   async function getPostByTag() {
     const url = `${process.env.REACT_APP_API_URL}/hashtag/${hashtag}/${userId}`;
@@ -26,7 +28,7 @@ export default function HashtagPage() {
     }
   }
 
-  useEffect(() => { getPostByTag() }, [])
+  useEffect(() => { getPostByTag() }, [tags])
 
   return (
 
@@ -37,18 +39,23 @@ export default function HashtagPage() {
           setOpen("none");
           setRotate("rotate(0)");
         }}>
-        <Title>
+        <Title data-test="hashtag-title">
           <p># {hashtag}</p>
         </Title>
-
-        {postsByTag.length === 0 ? (
-          <p className="noPosts">Sem posts até o momento</p>
-        ) : (
-          postsByTag.map((postsByTag) => (
-            <Posts key={postsByTag.id} post={postsByTag} like={postsByTag.liked} />
-          ))
-        )}
-
+        <Content>
+          <PostColumn>
+            {postsByTag.length === 0 ? (
+              <p className="noPosts">Sem posts até o momento</p>
+            ) : (
+              postsByTag.map((postsByTag) => (
+                <Posts key={postsByTag.id} post={postsByTag} like={postsByTag.liked} />
+              ))
+            )}
+          </PostColumn>
+          <TrendingWrapper>
+            <Trending />
+          </TrendingWrapper>
+        </Content>
       </Windown>
     </>
   )
@@ -92,4 +99,23 @@ const Windown = styled.div`
       font-size: 43px;
     }
   }
+`;
+
+const TrendingWrapper = styled.div`
+  @media (max-width: 640px) {
+    display: none;
+  }
+  margin-left: 17px;
+`;
+
+const Content = styled.div`
+  display: flex;
+`;
+
+const PostColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 800px;
 `;

@@ -6,6 +6,7 @@ import ProfilePage from "./pages/ProfilePage";
 import { UserDataProvider } from "./context/UserDataContext";
 import { MenuProvider } from "./context/MenuContext";
 import { PostsProvider } from "./context/PostsContext";
+import { HashtagProvider } from "./context/HashtagContext";
 import HashtagPage from "./pages/HashtagPage";
 
 function App() {
@@ -14,15 +15,17 @@ function App() {
       <UserDataProvider>
         <MenuProvider>
           <PostsProvider>
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<LoginPage />} />
-                <Route path="/sign-up" element={<SignUpPage />} />
-                <Route path="/timeline" element={<TimeLinePage />} />
-                <Route path="/user/:id" element={<ProfilePage />} />
-                <Route path="/hashtag/:hashtag" element={<HashtagPage />} />
-              </Routes>
-            </BrowserRouter>
+            <HashtagProvider>
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<LoginPage />} />
+                  <Route path="/sign-up" element={<SignUpPage />} />
+                  <Route path="/timeline" element={<TimeLinePage />} />
+                  <Route path="/user/:id" element={<ProfilePage />} />
+                  <Route path="/hashtag/:hashtag" element={<HashtagPage />} />
+                </Routes>
+              </BrowserRouter>
+            </HashtagProvider>
           </PostsProvider>
         </MenuProvider>
       </UserDataProvider>

@@ -3,6 +3,7 @@ import { styled } from 'styled-components'
 import { useNavigate } from 'react-router-dom';
 import { UserDataContext } from '../context/UserDataContext';
 import { MenuContext } from '../context/MenuContext';
+import { usePosts } from "../context/PostsContext";
 
 
 export default function Header() {
@@ -10,6 +11,8 @@ export default function Header() {
   const { setToken, userImage, setUserImage, setUserId, setUsername } = useContext(UserDataContext);
   const { open, setOpen, rotate, setRotate } = useContext(MenuContext)
   const navigate = useNavigate()
+  const { fetchPosts } = usePosts();
+
 
   return (
     <>
@@ -35,14 +38,15 @@ export default function Header() {
         </Conteiner>
         <Menu style={{ display: open }}>
           <p onClick={() => {
-            setToken(null);
-            setUserImage(null);
-            setUserId(null);
-            setUsername(null);
             localStorage.removeItem('token');
             localStorage.removeItem('userImage');
             localStorage.removeItem('userId');
             localStorage.removeItem('username');
+            setToken(null);
+            setUserImage(null);
+            setUserId(null);
+            setUsername(null);
+            fetchPosts()
             setOpen("none")
             setRotate("rotate(0)")
             navigate("/")

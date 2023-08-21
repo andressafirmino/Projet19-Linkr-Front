@@ -17,7 +17,7 @@ function Posts({ post }) {
   const { fetchPosts } = usePosts();
   const navigate = useNavigate();
 
-  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedDescription, setEditedDescription] = useState(post.description);
@@ -62,7 +62,7 @@ function Posts({ post }) {
       });
   };
 
-    const handleDeletePost = () => {
+  const handleDeletePost = () => {
     setIsDeleting(true);
 
     axios
@@ -102,10 +102,10 @@ function Posts({ post }) {
 
   const handleEditKeyDown = (event) => {
     if (event.key === "Enter") {
-      event.preventDefault(); 
-      handleSaveEditClick(); 
+      event.preventDefault();
+      handleSaveEditClick();
     } else if (event.key === "Escape") {
-      handleCancelEditClick(); 
+      handleCancelEditClick();
     }
   };
 
@@ -126,6 +126,17 @@ function Posts({ post }) {
       });
   };
 
+  const customStyles = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+    },
+  };
+
   const fetchLinkMetadata = async () => {
     try {
       const metadata = await urlMetadata(post.link);
@@ -136,16 +147,14 @@ function Posts({ post }) {
       console.error("Erro ao obter metadados do link:", error);
     }
   };
-
-
+  
   useEffect(() => {
     fetchPosts();
     fetchLinkMetadata()
 
   }, []);
-
   return (
-    <BoxPublication>
+    <BoxPublication data-test="post">
       <Sider>
         <img className="profleImg" src={post.ownerImage} />
         {liked ? (
@@ -165,13 +174,14 @@ function Posts({ post }) {
       </Sider>
       <Publi>
         <Container>
-          <p className="username" onClick={() => navigate(`/user/${post.userId}`)}>{post.ownerUsername}</p>
-          <DeleteAndUpdate>
-            <ModeEditIcon className="iconEdit" onClick={handleEditClick} data-test="edit-btn" />
-            <DeleteSharpIcon className="iconDelete" onClick={openModal} data-test="delete-btn"/>
-          </DeleteAndUpdate>
+          <p data-test="username" className="username" onClick={() => navigate(`/user/${post.userId}`)}>{post.ownerUsername}</p>
+          {`${post.userId}` === userId && (
+            <DeleteAndUpdate>
+              <ModeEditIcon className="iconEdit" onClick={handleEditClick} data-test="edit-btn" />
+              <DeleteSharpIcon className="iconDelete" onClick={openModal} data-test="delete-btn" />
+            </DeleteAndUpdate>
+          )}
         </Container>
-  
         {isEditing ? (
           <textarea
             ref={textareaRef}
@@ -183,7 +193,7 @@ function Posts({ post }) {
             data-test="edit-input"
           />
         ) : (
-          <p className="description">
+          <p data-test="description" className="description">
             {post.description}{" "}
             {post.hashtags.map((hashtag, index) => (
               <span onClick={() => navigate(`/hashtag/${hashtag}`)} key={index} className="highlight">
@@ -194,13 +204,14 @@ function Posts({ post }) {
         )}
 
         <div className="link">
-          <p>{postLink.title}</p>
+          <p data-test="link">{postLink.title} </p>
         </div>
       </Publi>
       <Modal
         isOpen={isModalOpen}
         onRequestClose={closeModal}
         contentLabel="Delete Post Modal"
+        style={customStyles}
       >
         <ModalContent>
           <p>Are you sure you want to delete this post?</p>
@@ -400,4 +411,6 @@ const ModalContent = styled.div`
     margin-right: 10px;
   }
 `;
+
+
 

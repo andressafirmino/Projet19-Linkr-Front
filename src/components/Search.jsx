@@ -14,7 +14,7 @@ export default function SearchUser() {
 
     function handleSearch(searchValue) {
         const user = searchValue;
-        if (searchText.length < 4) {
+        if (user.length < 3) {
             setUsersList([]);
         }
         if (user.length >= 3) {
@@ -44,9 +44,9 @@ export default function SearchUser() {
                 <></>
             )}
             {usersList && (
-                <Suggestions data-test="user-search">
+                <Suggestions >
                     {usersList.map(user =>
-                        <div className='suggestion' key={user.id} onClick={() => navigate(`/user/${user.id}`)}>
+                        <div className='suggestion' key={user.id} onClick={() => navigate(`/user/${user.id}`)} data-test="user-search">
                             <img src={user.image} />
                             <p>{user.username}</p>
                         </div>
