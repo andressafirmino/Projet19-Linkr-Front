@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import Header from "../components/Header";
 import { MenuContext } from "../context/MenuContext";
 import { styled } from "styled-components";
@@ -16,22 +16,6 @@ export default function TimeLinePage() {
   const [disabled, setDisabled] = useState(false);
   const isLargeScreen = window.innerWidth > 611;
   const { posts, loading, fetchPosts } = usePosts();
-
-  // useEffect(() => {
-  //   fetchPosts();
-  // }, [reload]);
-
-  // function fetchPosts() {
-  //   const url = `${process.env.REACT_APP_API_URL}/posts`;
-  //   axios
-  //     .get(url)
-  //     .then((response) => {
-  //       setPosts(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching posts:", error);
-  //     });
-  // }
 
 
   function publicPost(e) {
@@ -59,6 +43,10 @@ export default function TimeLinePage() {
         setDisabled(false);
       });
   }
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
   return (
     <PageContainer>
@@ -111,7 +99,7 @@ export default function TimeLinePage() {
           <p className="noPosts">Sem posts até o momento</p>
         ) : (
           posts.map((post) => (
-            <Posts key={post.id} post={post} like={post.liked} />
+            <Posts key={post.id} post={post}/>
           ))
         )}
       </Windown>

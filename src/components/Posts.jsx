@@ -9,9 +9,10 @@ import axios from "axios";
 import { usePosts } from "../context/PostsContext";
 import { useNavigate } from "react-router-dom";
 import Modal from 'react-modal';
+import urlMetadata from "url-metadata";
 
-function Posts({ post, like }) {
-  const [liked, setLiked] = useState(like);
+function Posts({ post }) {
+  const [liked, setLiked] = useState(post.liked);
   const { userId, token } = useContext(UserDataContext);
   const { fetchPosts } = usePosts();
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ function Posts({ post, like }) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedDescription, setEditedDescription] = useState(post.description);
+  const [postLink, setPostLink] = useState(post.link)
 
   const textareaRef = useRef(null);
 
@@ -124,8 +126,22 @@ function Posts({ post, like }) {
       });
   };
 
+  const fetchLinkMetadata = async () => {
+    try {
+      const metadata = await urlMetadata(post.link);
+      setPostLink(metadata);
+      console.log(metadata)
+
+    } catch (error) {
+      console.error("Erro ao obter metadados do link:", error);
+    }
+  };
+
+
   useEffect(() => {
     fetchPosts();
+    fetchLinkMetadata()
+
   }, []);
 
   return (
@@ -178,7 +194,7 @@ function Posts({ post, like }) {
         )}
 
         <div className="link">
-          <p>{post.link} </p>
+          <p>{postLink.title}</p>
         </div>
       </Publi>
       <Modal
