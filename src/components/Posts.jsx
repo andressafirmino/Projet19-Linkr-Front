@@ -189,7 +189,7 @@ function Posts({ post, like }) {
         )}
 
         <div className="link">
-          <p data-test="link">{post.link} </p>
+          <a href={post.link} data-test="link">{post.link} </a>
         </div>
       </Publi>
       <Modal

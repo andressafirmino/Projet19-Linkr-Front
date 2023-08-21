@@ -59,7 +59,7 @@ export default function TimeLinePage() {
         fetchPosts();
       })
       .catch((e) => {
-        alert("Houve um erro ao publicar seu link");
+        alert("There was an error publishing your link");
         setDisabled(false);
       });
   }
@@ -111,7 +111,7 @@ export default function TimeLinePage() {
         </PostContainer>
 
         {posts.length === 0 ? (
-          <p className="noPosts">Sem posts até o momento</p>
+          <p className="noPosts" data-test="message">Sem posts até o momento</p>
         ) : (
           posts.map((post) => (
             <Posts key={post.id} post={post} like={post.liked} />
