@@ -53,9 +53,9 @@ export default function SearchUser() {
         <></>
       )}
       {usersList && (
-        <Suggestions style={{ display: closedSearch }}>
+        <Suggestions style={{ display: closedSearch }} data-test="user-search">
           {usersList.map(user =>
-            <div className='suggestion' key={user.id} onClick={() => navigate(`/user/${user.id}`)} data-test="user-search" >
+            <div className='suggestion' key={user.id} onClick={() => navigate(`/user/${user.id}`)} >
               <img src={user.image} />
               <p>{user.username}</p>
             </div>
