@@ -190,14 +190,17 @@ function Posts({ post }) {
 
         <div className="link" data-test="link">
           <a href={post.link} target="_blank" rel="noopener noreferrer">
-            <div className="linkText">
-              <h2> {urlData.title}</h2>
-              <p>{urlData.description}</p>
-              <p>{post.link}</p>
-            </div>
-            <div className="linkImage">
-              <img src={urlData.image} alt="linkImage" />
-            </div>
+            {post.urlData && (
+              <>
+                <div className="linkText">
+                  <h2> {post.urlData.title}</h2>
+                  <p>{post.urlData.description}</p>
+                  <p>{post.link}</p>
+                </div>
+                <div className="linkImage">
+                  <img src={post.urlData.image} alt="linkImage" />
+                </div>
+              </>)}
           </a>
         </div>
       </Publi>
