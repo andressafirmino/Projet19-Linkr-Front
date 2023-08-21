@@ -16,7 +16,7 @@ function Posts({ post, like }) {
   const { fetchPosts } = usePosts();
   const navigate = useNavigate();
 
-  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedDescription, setEditedDescription] = useState(post.description);
@@ -60,7 +60,7 @@ function Posts({ post, like }) {
       });
   };
 
-    const handleDeletePost = () => {
+  const handleDeletePost = () => {
     setIsDeleting(true);
 
     axios
@@ -100,10 +100,10 @@ function Posts({ post, like }) {
 
   const handleEditKeyDown = (event) => {
     if (event.key === "Enter") {
-      event.preventDefault(); 
-      handleSaveEditClick(); 
+      event.preventDefault();
+      handleSaveEditClick();
     } else if (event.key === "Escape") {
-      handleCancelEditClick(); 
+      handleCancelEditClick();
     }
   };
 
@@ -125,21 +125,21 @@ function Posts({ post, like }) {
   };
 
   const customStyles = {
-  content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
-  },
-};
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+    },
+  };
 
   useEffect(() => {
     fetchPosts();
   }, []);
   return (
-    <BoxPublication>
+    <BoxPublication data-test="post">
       <Sider>
         <img className="profleImg" src={post.ownerImage} />
         {liked ? (
@@ -159,12 +159,12 @@ function Posts({ post, like }) {
       </Sider>
       <Publi>
         <Container>
-          <p className="username" onClick={() => navigate(`/user/${post.userId}`)}>{post.ownerUsername}</p>
+          <p data-test="username" className="username" onClick={() => navigate(`/user/${post.userId}`)}>{post.ownerUsername}</p>
           {`${post.userId}` === userId && (
-          <DeleteAndUpdate>
-            <ModeEditIcon className="iconEdit" onClick={handleEditClick} data-test="edit-btn" />
-            <DeleteSharpIcon className="iconDelete" onClick={openModal} data-test="delete-btn" />
-          </DeleteAndUpdate>
+            <DeleteAndUpdate>
+              <ModeEditIcon className="iconEdit" onClick={handleEditClick} data-test="edit-btn" />
+              <DeleteSharpIcon className="iconDelete" onClick={openModal} data-test="delete-btn" />
+            </DeleteAndUpdate>
           )}
         </Container>
         {isEditing ? (
@@ -178,7 +178,7 @@ function Posts({ post, like }) {
             data-test="edit-input"
           />
         ) : (
-          <p className="description">
+          <p data-test="description" className="description">
             {post.description}{" "}
             {post.hashtags.map((hashtag, index) => (
               <span onClick={() => navigate(`/hashtag/${hashtag}`)} key={index} className="highlight">
@@ -189,7 +189,7 @@ function Posts({ post, like }) {
         )}
 
         <div className="link">
-          <p>{post.link} </p>
+          <p data-test="link">{post.link} </p>
         </div>
       </Publi>
       <Modal
