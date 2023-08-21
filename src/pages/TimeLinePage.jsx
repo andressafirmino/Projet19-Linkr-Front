@@ -7,6 +7,7 @@ import { UserDataContext } from "../context/UserDataContext";
 import { usePosts } from "../context/PostsContext";
 import Posts from "../components/Posts";
 import SearchUser from "../components/Search";
+import Trending from "../components/Trending";
 
 export default function TimeLinePage() {
   const { setOpen, setRotate } = useContext(MenuContext);
@@ -78,7 +79,9 @@ export default function TimeLinePage() {
         <Title>
           <p>timeline</p>
         </Title>
-        <PostContainer data-test="publish-box">
+        <PageContent>
+          <Content>
+            <PostContainer data-test="publish-box">
           <BoxImage>
             <img src={userImage} />
           </BoxImage>
@@ -109,14 +112,20 @@ export default function TimeLinePage() {
             </form>
           </BoxPost>
         </PostContainer>
-
+        <PostList>
         {posts.length === 0 ? (
-          <p className="noPosts" data-test="message">Sem posts até o momento</p>
+          <p className="noPosts">Sem posts até o momento</p>
         ) : (
           posts.map((post) => (
             <Posts key={post.id} post={post} like={post.liked} />
           ))
         )}
+        </PostList>
+        </Content>
+          <TrendingWrapper>
+            <Trending />
+          </TrendingWrapper>
+        </PageContent>
       </Windown>
     </PageContainer>
   );
@@ -306,3 +315,26 @@ const BoxButton = styled.div`
   }
 `;
 
+const TrendingWrapper = styled.div`
+  margin-left: 16px;
+
+  @media (max-width: 640px) {
+    display: none;
+  }
+`;
+
+const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const PostList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
+const PageContent = styled.div`
+  display: flex;
+  flex-direction: row;
+`;

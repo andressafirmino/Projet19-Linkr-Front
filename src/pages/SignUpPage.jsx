@@ -32,7 +32,7 @@ export default function SignUpPage() {
 
       navigate('/');
     } catch (error) {
-      if (error.response && error.response.status === 409) {
+      if (error.response.status === 409) {
         alert('Já existe um usuário cadastrado com esse email!');
       } else {
         alert('Erro ao cadastrar! Tente novamente.');

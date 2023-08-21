@@ -110,11 +110,12 @@ const TrendingWrapper = styled.div`
 
 const Content = styled.div`
   display: flex;
-
 `;
 
 const PostColumn = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+  width: 100%;
+  max-width: 800px;
 `;
