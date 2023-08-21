@@ -17,8 +17,14 @@ export function PostsProvider({ children }) {
     console.log(posts);
     try {
       const response = await axios.get(url);
-      const allPosts = response.data;
-      setPosts(allPosts.slice(0, 20));
+
+      if (response.data.length > 20) {
+        const res = response.data.slice(0, 20)
+        setPosts(res);
+      } else {
+        setPosts(response.data);
+      }
+
     } catch (error) {
       alert("Houve uma falha ao obter os posts. Por favor, atualize a página.");
       console.error(error);

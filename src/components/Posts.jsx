@@ -143,17 +143,17 @@ function Posts({ post }) {
       <Sider>
         <img className="profleImg" src={post.ownerImage} />
         {liked ? (
-          <FavoriteOutlinedIcon
+          <FavoriteOutlinedIcon data-test="like-btn"
             className="iconLiked"
             onClick={handleUnikeClick}
           />
         ) : (
-          <FavoriteBorderOutlinedIcon
+          <FavoriteBorderOutlinedIcon data-test="like-btn"
             className="iconNotLiked"
             onClick={handleLikeClick}
           />
         )}
-        <p className="likes">
+        <p data-test="counter" className="likes">
           {post.likes === 1 ? `${post.likes} like` : `${post.likes} likes`}
         </p>
       </Sider>
