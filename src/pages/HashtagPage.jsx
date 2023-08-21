@@ -13,7 +13,7 @@ export default function HashtagPage() {
   const { hashtag } = useParams();
   const { userId } = useContext(UserDataContext);
   const { setOpen, setRotate } = useContext(MenuContext);
-  const { tags, setTags } = useContext(HashtagContext);
+  const { tags } = useContext(HashtagContext);
   const [postsByTag, setPostsByTag] = useState([]);
 
   async function getPostByTag() {
@@ -110,11 +110,12 @@ const TrendingWrapper = styled.div`
 
 const Content = styled.div`
   display: flex;
-
 `;
 
 const PostColumn = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+  width: 100%;
+  max-width: 800px;
 `;
