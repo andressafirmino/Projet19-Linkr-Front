@@ -318,6 +318,7 @@ const Publi = styled.div`
     height: 115px;
 
     display: flex;
+    flex-direction: row;
 
     border: 1px solid #4d4d4d;
     border-radius: 11px;
@@ -334,6 +335,20 @@ const Publi = styled.div`
       font-style: normal;
       font-weight: 400;
       line-height: normal;
+    }
+
+    .linkText {
+      width: 60%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .linkImage {
+      width: 40%;
+      display: flex;
+      flex-direction: column;
     }
   }
   @media (min-width: 640px) {
