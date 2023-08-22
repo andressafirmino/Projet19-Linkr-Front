@@ -158,6 +158,10 @@ function Posts({ post }) {
         <p data-test="counter" className="likes">
           {post.likes === 1 ? `${post.likes} like` : `${post.likes} likes`}
         </p>
+        <ion-icon name="chatbubbles-outline" />
+        <p>3 comments</p>
+        <ion-icon name="repeat-outline" />
+        <p>0 re-post</p>
       </Sider>
       <Publi>
         <Container>
@@ -251,6 +255,13 @@ const BoxPublication = styled.div`
   @media (min-width: 640px) {
     padding: 20px 0 20px 0;
   }
+  ion-icon{
+    flex-shrink: 0;
+    color:#FFFFFF;
+    font-size: 25px;
+    margin-top:15px;
+    margin-bottom:2px;
+  }
 `;
 const Sider = styled.div`
   display: flex;
@@ -277,6 +288,13 @@ const Sider = styled.div`
   }
   .iconLiked {
     color: #ff0000;
+  }
+  p{
+    color: #fff;
+    text-align: center;
+    font-family: Lato;
+    font-size: 11px;
+    font-weight: 400;
   }
   @media (min-width: 640px) {
     img {
