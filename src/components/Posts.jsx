@@ -194,11 +194,11 @@ function Posts({ post }) {
               <>
                 <div className="linkText">
                   <h2> {post.urlData.title}</h2>
-                  <p>{post.urlData.description}</p>
-                  <p>{post.link}</p>
+                  <h3>{post.urlData.description}</h3>
+                  <h4>{post.urlData.url}</h4>
                 </div>
                 <div className="linkImage">
-                  <img src={post.urlData.image} alt="linkImage" />
+                  <img src={post.urlData.images[0]} alt="linkImage" />
                 </div>
               </>)}
           </a>
@@ -233,6 +233,7 @@ const BoxPublication = styled.div`
   display: flex;
   flex-direction: row;
   padding: 10px 0 15px 0;
+  margin-bottom:20px;
 
   line-height: normal;
 
@@ -314,11 +315,11 @@ const Publi = styled.div`
     margin-left: 5px;
   }
   .link {
-    width: 100%;
-    height: 115px;
+    /* width: 100%;
+    height: 115px; */
 
     display: flex;
-    flex-direction: row;
+    /* flex-direction: row; */
 
     border: 1px solid #4d4d4d;
     border-radius: 11px;
@@ -327,28 +328,80 @@ const Publi = styled.div`
 
     overflow: hidden;
 
+    width: 503px;
+    height: 155px;
+    flex-shrink: 0;
+
     a {
-      width: calc(100% - 22px);
       color: #cecece;
       font-family: Lato;
       font-size: 9px;
       font-style: normal;
       font-weight: 400;
       line-height: normal;
+      display:flex;
+      justify-content:space-around;
+      position:relative;
     }
 
     .linkText {
+      position:absolute;
+      top:-12px;
+      left:0px;
       width: 60%;
       height: 100%;
       display: flex;
       flex-direction: column;
       justify-content: center;
+      h2{
+        margin-top:24px;
+        color: #CECECE;
+        font-family: Lato;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        width: 250px;
+      }
+      h3{
+        margin-top:5px;
+        color: #9B9595;
+        font-family: Lato;
+        font-size: 11px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        width: 302.816px;
+      }
+      h4{
+        margin-top:13px;
+        color: #CECECE;
+        font-family: Lato;
+        font-size: 11px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        width: 263.186px;
+      }
     }
 
     .linkImage {
-      width: 40%;
+      position:absolute;
+      top:-12px;
+      left:337px;
+      width: 154px;
+      height: 155px;
+      flex-shrink: 0;
+      img{
+        width: 153.44px;
+        height: 155px;
+        flex-shrink: 0;
+        border-radius: 0px 12px 13px 0px;
+        margin-right: -11px;
+      }
+      /* width: 40%;
       display: flex;
-      flex-direction: column;
+      flex-direction: column; */
     }
   }
   @media (min-width: 640px) {
@@ -358,7 +411,7 @@ const Publi = styled.div`
     }
     .link {
       width: auto;
-      max-width: 503px;
+      width: 503px;
       font-size: 11px;
     }
   }
