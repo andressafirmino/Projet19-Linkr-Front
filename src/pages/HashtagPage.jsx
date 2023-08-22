@@ -48,7 +48,7 @@ export default function HashtagPage() {
               <p className="noPosts">Sem posts até o momento</p>
             ) : (
               postsByTag.map((postsByTag) => (
-                <Posts key={postsByTag.id} post={postsByTag} like={postsByTag.liked} />
+                <Posts key={postsByTag.id} post={postsByTag} />
               ))
             )}
           </PostColumn>
