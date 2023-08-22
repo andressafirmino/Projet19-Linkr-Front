@@ -190,7 +190,7 @@ function Posts({ post }) {
 
         <div className="link" data-test="link">
           <a href={post.link} target="_blank" rel="noopener noreferrer">
-            {post.urlData && (
+            {post.urlData.title ? (
               <>
                 <div className="linkText">
                   <h2> {post.urlData.title}</h2>
@@ -200,7 +200,12 @@ function Posts({ post }) {
                 <div className="linkImage">
                   <img src={post.urlData.images[0]} alt="linkImage" />
                 </div>
-              </>)}
+              </>) :
+              <>
+                <div className="linkText">
+                  <h1>{post.urlData.url}</h1>
+                </div>
+              </>}
           </a>
         </div>
       </Publi>
@@ -333,6 +338,8 @@ const Publi = styled.div`
     flex-shrink: 0;
 
     a {
+      width:100%;
+      height:100%;
       color: #cecece;
       font-family: Lato;
       font-size: 9px;
@@ -353,6 +360,17 @@ const Publi = styled.div`
       display: flex;
       flex-direction: column;
       justify-content: center;
+      h1{
+        margin-top:24px;
+        margin-left:95px;
+        color: #CECECE;
+        font-family: Lato;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        width: 250px;
+      }
       h2{
         margin-top:24px;
         color: #CECECE;
@@ -364,6 +382,7 @@ const Publi = styled.div`
         width: 250px;
       }
       h3{
+        box-sizing:border-box;
         margin-top:5px;
         color: #9B9595;
         font-family: Lato;
@@ -372,6 +391,7 @@ const Publi = styled.div`
         font-weight: 400;
         line-height: normal;
         width: 302.816px;
+        max-height:38px;
       }
       h4{
         margin-top:13px;
