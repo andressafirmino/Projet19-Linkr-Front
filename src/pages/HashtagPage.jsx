@@ -47,7 +47,12 @@ export default function HashtagPage() {
             {postsByTag.length === 0 ? (
               <p className="noPosts">Sem posts até o momento</p>
             ) : (
-              postsByTag.map((postsByTag) => <Posts key={postsByTag.id} />)
+              postsByTag.map(
+                (postByTag) => (
+                  console.log(postByTag),
+                  (<Posts key={postByTag.id} post={postByTag} />)
+                )
+              )
             )}
           </PostColumn>
           <TrendingWrapper>

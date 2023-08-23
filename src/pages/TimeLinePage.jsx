@@ -24,8 +24,8 @@ export default function TimeLinePage() {
   function publicPost(e) {
     e.preventDefault();
 
-    if (link === '') {
-      return alert("There was an error publishing your link")
+    if (link === "") {
+      return alert("There was an error publishing your link");
     }
 
     setDisabled(true);
@@ -93,7 +93,11 @@ export default function TimeLinePage() {
                     data-test="description"
                   />
                   <BoxButton>
-                    <button type="submit" disabled={disabled} data-test="publish-btn">
+                    <button
+                      type="submit"
+                      disabled={disabled}
+                      data-test="publish-btn"
+                    >
                       {disabled ? <>Publishing...</> : <>Publish</>}
                     </button>
                   </BoxButton>
@@ -102,11 +106,11 @@ export default function TimeLinePage() {
             </PostContainer>
             <PostList>
               {posts.length === 0 ? (
-                <p className="noPosts" data-test="message">There are no posts yet</p>
+                <p className="noPosts" data-test="message">
+                  There are no posts yet
+                </p>
               ) : (
-                posts.map((post) => (
-                  <Posts key={post.id} post={post} like={post.liked} />
-                ))
+                posts.map((post) => <Posts key={post.id} post={post} />)
               )}
             </PostList>
           </Content>
@@ -166,13 +170,13 @@ const Title = styled.div`
     font-family: "Oswald", sans-serif;
     color: #ffffff;
   }
-  
-  @media screen and (min-width: 640px) {  
+
+  @media screen and (min-width: 640px) {
     width: 611px;
-    margin: 50px auto 0;  
+    margin: 50px auto 0;
     p {
-    font-size: 43px;
-  }
+      font-size: 43px;
+    }
   }
 `;
 const PostContainer = styled.div`
@@ -187,11 +191,10 @@ const PostContainer = styled.div`
     border-radius: 16px;
     box-shadow: 0px 4px 4px 0px #00000040;
     margin: 0 auto 16px;
-}
-  @media screen and (min-width: 640px) {
-
   }
-`
+  @media screen and (min-width: 640px) {
+  }
+`;
 const BoxImage = styled.div`
   width: 86px;
   height: 209px;
@@ -207,7 +210,7 @@ const BoxImage = styled.div`
   @media screen and (min-width: 611px) {
     display: inline;
   }
-`
+`;
 const BoxPost = styled.div`
   width: 100%;
   height: 164px;
@@ -239,12 +242,12 @@ const BoxPost = styled.div`
     margin-bottom: 5px;
   }
   input::placeholder {
-      font-size: 13px;
-      font-weight: 300;
-      color: #949494;
-    }
-  input:focus{
-    outline: none; 
+    font-size: 13px;
+    font-weight: 300;
+    color: #949494;
+  }
+  input:focus {
+    outline: none;
   }
   .link {
     height: 30px;
@@ -253,7 +256,7 @@ const BoxPost = styled.div`
     height: 47px;
   }
   @media screen and (min-width: 611px) {
-    width: 524px; 
+    width: 524px;
     height: 209px;
     display: flex;
     align-items: flex-start;
@@ -265,17 +268,18 @@ const BoxPost = styled.div`
       font: 20px;
       text-align: left;
       margin: 0;
-    } 
-    form, input {
+    }
+    form,
+    input {
       width: 502px;
     }
-    input::placeholder{
+    input::placeholder {
       font-size: 15px;
     }
-    .description{
+    .description {
       height: 66px;
     }
-  } 
+  }
 `;
 const BoxButton = styled.div`
   width: calc(100vw - 30px);
