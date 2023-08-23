@@ -1,13 +1,13 @@
-import axios from 'axios';
-import React, { useContext, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { styled } from 'styled-components'
-import Header from '../components/Header';
+import axios from "axios";
+import React, { useContext, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { styled } from "styled-components";
+import Header from "../components/Header";
 import { MenuContext } from "../context/MenuContext";
-import { UserDataContext } from '../context/UserDataContext';
-import { HashtagContext } from '../context/HashtagContext';
-import Posts from '../components/Posts';
-import Trending from '../components/Trending';
+import { UserDataContext } from "../context/UserDataContext";
+import { HashtagContext } from "../context/HashtagContext";
+import Posts from "../components/Posts";
+import Trending from "../components/Trending";
 
 export default function HashtagPage() {
   const { hashtag } = useParams();
@@ -19,26 +19,26 @@ export default function HashtagPage() {
   async function getPostByTag() {
     const url = `${process.env.REACT_APP_API_URL}/hashtag/${hashtag}/${userId}`;
     try {
-      const promise = await axios.get(url)
-      console.log(promise.data);
+      const promise = await axios.get(url);
       setPostsByTag(promise.data);
-
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
-  useEffect(() => { getPostByTag() }, [tags])
+  useEffect(() => {
+    getPostByTag();
+  }, [tags]);
 
   return (
-
     <>
       <Header />
       <Windown
         onClick={() => {
           setOpen("none");
           setRotate("rotate(0)");
-        }}>
+        }}
+      >
         <Title data-test="hashtag-title">
           <p># {hashtag}</p>
         </Title>
@@ -47,9 +47,7 @@ export default function HashtagPage() {
             {postsByTag.length === 0 ? (
               <p className="noPosts">Sem posts até o momento</p>
             ) : (
-              postsByTag.map((postsByTag) => (
-                <Posts key={postsByTag.id} post={postsByTag} />
-              ))
+              postsByTag.map((postsByTag) => <Posts key={postsByTag.id} />)
             )}
           </PostColumn>
           <TrendingWrapper>
@@ -58,7 +56,7 @@ export default function HashtagPage() {
         </Content>
       </Windown>
     </>
-  )
+  );
 }
 
 const Title = styled.div`
@@ -73,7 +71,7 @@ const Title = styled.div`
     font-family: "Oswald", sans-serif;
     color: #ffffff;
   }
-`
+`;
 const Windown = styled.div`
   height: calc(100vh - 72px);
   background-color: #333333;

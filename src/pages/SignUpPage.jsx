@@ -1,23 +1,23 @@
-import React from 'react'
+import React from "react";
 import styled from "styled-components";
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import axios from 'axios';
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import axios from "axios";
 
 export default function SignUpPage() {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
-  const [image, setImage] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [image, setImage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSignUp = async (e) => {
     e.preventDefault();
 
     if (!email || !password || !username || !image) {
-      alert('Preencha todos os campos!');
+      alert("Preencha todos os campos!");
       return;
     }
 
@@ -28,14 +28,13 @@ export default function SignUpPage() {
 
     try {
       const res = await axios.post(`${url}`, user);
-      console.log(res.data);
 
-      navigate('/');
+      navigate("/");
     } catch (error) {
       if (error.response.status === 409) {
-        alert('Já existe um usuário cadastrado com esse email!');
+        alert("Já existe um usuário cadastrado com esse email!");
       } else {
-        alert('Erro ao cadastrar! Tente novamente.');
+        alert("Erro ao cadastrar! Tente novamente.");
       }
     } finally {
       setIsLoading(false);
@@ -78,26 +77,29 @@ export default function SignUpPage() {
             value={image}
             onChange={(e) => setImage(e.target.value)}
           />
-          <button data-test="sign-up-btn" disabled={isLoading}>{isLoading ? 'Signing Up...' : 'Sign Up'}</button>
+          <button data-test="sign-up-btn" disabled={isLoading}>
+            {isLoading ? "Signing Up..." : "Sign Up"}
+          </button>
         </form>
-        <p data-test="login-link" onClick={() => navigate('/')}>Switch back to Log In</p>
+        <p data-test="login-link" onClick={() => navigate("/")}>
+          Switch back to Log In
+        </p>
       </ContainerForm>
     </Conteiner>
   );
 }
 
-
 const ContainerText = styled.div`
-  width:63%;
-  background-color:#151515;
-  height:100vh;
-  display:flex;
-  flex-direction:column;
+  width: 63%;
+  background-color: #151515;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 
-  h1{
-    color: #FFF;
+  h1 {
+    color: #fff;
     font-family: Passion One;
     font-size: 106px;
     font-style: normal;
@@ -105,82 +107,80 @@ const ContainerText = styled.div`
     line-height: normal;
     letter-spacing: 5.3px;
   }
-  h2{
-    color: #FFF;
+  h2 {
+    color: #fff;
     font-family: Oswald;
     font-size: 43px;
     font-style: normal;
     font-weight: 700;
     line-height: normal;
 
-    width:55%;
+    width: 55%;
   }
-`
+`;
 const ContainerForm = styled.div`
-  width:37%;
-  background-color:#333333;
-  height:100vh;
+  width: 37%;
+  background-color: #333333;
+  height: 100vh;
 
-  display:flex;
-  flex-direction:column;
+  display: flex;
+  flex-direction: column;
 
   justify-content: center;
   align-items: center;
-  form{
-    display:flex;
-    flex-direction:column;
+  form {
+    display: flex;
+    flex-direction: column;
 
     justify-content: center;
     align-items: center;
 
-    input{
+    input {
       width: 429px;
       height: 65px;
       flex-shrink: 0;
 
-      border-radius:6px;
-      margin:8px;
+      border-radius: 6px;
+      margin: 8px;
 
-      color: #9F9F9F;
+      color: #9f9f9f;
       font-family: Oswald;
       font-size: 27px;
       font-style: normal;
       font-weight: 700;
       line-height: normal;
 
-      padding-left:8px;
+      padding-left: 8px;
     }
 
-    button{
+    button {
       width: 443px;
       height: 65px;
       flex-shrink: 0;
 
       border-radius: 6px;
-      background: #1877F2;
+      background: #1877f2;
 
-      color: #FFF;
+      color: #fff;
       font-family: Oswald;
       font-size: 27px;
       font-style: normal;
       font-weight: 700;
       line-height: normal;
 
-      margin:13px;
-      margin-top:0px;
+      margin: 13px;
+      margin-top: 0px;
 
-      appearance:none;
+      appearance: none;
       border-width: none;
       border-style: none;
       border-color: none;
       border-image: none;
     }
-
-
   }
-  
-  p{
-    color: #FFF;
+
+  p {
+    color: #fff;
     font-family: Lato;
     font-size: 20px;
     font-style: normal;
@@ -188,31 +188,30 @@ const ContainerForm = styled.div`
     line-height: normal;
     text-decoration-line: underline;
   }
-`
+`;
 
 const Conteiner = styled.div`
-  display:flex;
+  display: flex;
 
   @media (max-width: 640px) {
-    display:flex;
-    flex-direction:column;
-    
-    width:auto;
+    display: flex;
+    flex-direction: column;
 
+    width: auto;
 
-    div:first-child{
+    div:first-child {
       width: auto;
       height: 26%;
       flex-shrink: 0;
-      display:flex;
+      display: flex;
       flex-direction: column;
       align-items: center;
 
-      h1{
-        width:167px;
-        margin-top:10px;
+      h1 {
+        width: 167px;
+        margin-top: 10px;
 
-        color: #FFF;
+        color: #fff;
         font-family: Passion One;
         font-size: 76px;
         font-style: normal;
@@ -220,11 +219,11 @@ const Conteiner = styled.div`
         line-height: normal;
         letter-spacing: 3.8px;
       }
-      h2{
-        width:250px;
-        margin-bottom:27px;
+      h2 {
+        width: 250px;
+        margin-bottom: 27px;
 
-        color: #FFF;
+        color: #fff;
         text-align: center;
         font-family: Oswald;
         font-size: 23px;
@@ -234,25 +233,24 @@ const Conteiner = styled.div`
       }
     }
 
-    div:last-child{
+    div:last-child {
       width: auto;
       /* height:621px; */
 
-      padding-top:35px;
+      padding-top: 35px;
 
-      display:flex;
+      display: flex;
       align-items: center;
       justify-content: flex-start;
-      form{
-        
-        input{
+      form {
+        input {
           width: 330px;
           height: 55px;
           flex-shrink: 0;
         }
-        button{
-          margin-top:9px;
-          
+        button {
+          margin-top: 9px;
+
           width: 345px;
           height: 55px;
           flex-shrink: 0;
@@ -260,4 +258,4 @@ const Conteiner = styled.div`
       }
     }
   }
-`
+`;
