@@ -8,13 +8,17 @@ import SearchUser from "../components/Search";
 import { usePosts } from "../context/PostsContext";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { UserDataContext } from "../context/UserDataContext";
 
 export default function ProfilePage() {
   const { setOpen, setRotate } = useContext(MenuContext);
   const { id } = useParams();
   const { posts, fetchPosts } = usePosts();
   const [userProfile, setUserProfile] = useState(null);
-
+  const [checkUser, setCheckUser] = useState(true);
+  const { userId } = useContext(UserDataContext);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [disable, setDisable] = useState(false);
 
   useEffect(() => {
     setOpen("none");
@@ -22,24 +26,70 @@ export default function ProfilePage() {
     fetchPosts();
   }, [setOpen, setRotate]);
 
-  const userId = parseInt(id);
+  const profileId = parseInt(id);
 
-  const userPosts = posts.filter((post) => post.userId === userId);
+  const userPosts = posts.filter((post) => post.userId === profileId);
+
+  const handleFollowClick = async () => {
+    setDisable(true);
+    try {
+      const body = {
+        userId: id,
+        followerId: userId,
+      };
+
+      await axios.post(`${process.env.REACT_APP_API_URL}/follow`, body);
+      setIsFollowing(true);
+    } catch (error) {
+      console.error("Erro ao seguir o usuário:", error);
+      alert("Erro ao seguir o usuário. Tente novamente mais tarde.");
+    } finally {
+      setDisable(false);
+    }
+  };
+
+  const handleUnfollowClick = async () => {
+    setDisable(true);
+    try {
+      const body = {
+        userId: id,
+        followerId: userId,
+      };
+
+      await axios.delete(`${process.env.REACT_APP_API_URL}/unfollow`, {
+        data: body,
+      });
+      setIsFollowing(false);
+    } catch (error) {
+      console.error("Erro ao deixar de seguir o usuário:", error);
+      alert("Erro ao deixar de seguir o usuário. Tente novamente mais tarde.");
+    } finally {
+      setDisable(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
+    const fetchUserProfile = async (userId) => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/${id}`);
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/user/${id}?userId=${userId}`
+        );
         setUserProfile(response.data);
-        
+        setIsFollowing(response.data.isFollowing);
+        fetchCheckUser(response.data);
       } catch (error) {
-        //console.error("Error fetching user profile:", error);
         console.log(error.response.data);
       }
     };
 
-    fetchUserProfile();
-  }, [id]);
+    const fetchCheckUser = (profileData) => {
+      if (profileData.id === userId) {
+        setCheckUser(false);
+      }
+    };
+
+    fetchUserProfile(userId);
+  }, [id, userId]);
 
   return (
     <PageContainer>
@@ -48,9 +98,26 @@ export default function ProfilePage() {
       {userProfile ? (
         <UserInfo>
           <Title>
-            <UserImage src={userProfile.image} alt={`${userProfile.username}'s Profile Image`} />
+            <UserImage
+              src={userProfile.image}
+              alt={`${userProfile.username}'s Profile Image`}
+            />
             <p>{userProfile.username}'s posts</p>
           </Title>
+          {checkUser &&
+            (isFollowing ? (
+              <button
+                className="unfollow"
+                onClick={handleUnfollowClick}
+                disabled={disable}
+              >
+                Unfollow
+              </button>
+            ) : (
+              <button onClick={handleFollowClick} disabled={disable}>
+                {isFollowing ? "Following..." : "Follow"}
+              </button>
+            ))}
         </UserInfo>
       ) : null}
       <Window>
@@ -117,9 +184,31 @@ const Window = styled.div`
 
 const UserInfo = styled.div`
   display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   align-items: center;
   margin-left: 10px;
+  margin-right: 10px;
   margin-bottom: 16px;
+  button {
+    width: 112px;
+    height: 31px;
+    border-radius: 5px;
+    border: none;
+    background-color: #1877f2;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 17px;
+    cursor: pointer;
+  }
+  .unfollow {
+    background-color: #ffffff;
+    color: #1877f2;
+  }
   @media (max-width: 640px) {
     margin-top: 65px;
   }
