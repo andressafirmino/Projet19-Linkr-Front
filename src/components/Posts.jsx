@@ -103,7 +103,6 @@ function Posts({ post }) {
     }
   };
 
-
   const handleCancelEditClick = () => {
     setIsEditing(false);
     setEditedDescription(post.description);
@@ -135,251 +134,258 @@ function Posts({ post }) {
       });
   };
 
-
-
   useEffect(() => {
     fetchPosts();
   }, []);
-  return (
-    <BoxPublication data-test="post">
-      <Sider>
-        <img className="profleImg" src={post.ownerImage} />
-        {liked ? (
-          <FavoriteOutlinedIcon data-test="like-btn"
-            className="iconLiked"
-            onClick={handleUnikeClick}
-          />
-        ) : (
-          <FavoriteBorderOutlinedIcon data-test="like-btn"
-            className="iconNotLiked"
-            onClick={handleLikeClick}
-          />
-        )}
-        <p data-test="counter" className="likes">
-          {post.likes === 1 ? `${post.likes} like` : `${post.likes} likes`}
-        </p>
-        <ion-icon name="chatbubbles-outline" />
-        <p>3 comments</p>
-        <ion-icon name="repeat-outline" />
-        <p>0 re-post</p>
-      </Sider>
-      <Publi>
-        <Container>
-          <p data-test="username" className="username" onClick={() => navigate(`/user/${post.userId}`)}>{post.ownerUsername}</p>
-          {`${post.userId}` === userId && (
-            <DeleteAndUpdate>
-              <ModeEditIcon className="iconEdit" onClick={handleEditClick} data-test="edit-btn" />
-              <DeleteSharpIcon className="iconDelete" onClick={openModal} data-test="delete-btn" />
-            </DeleteAndUpdate>
-          )}
-        </Container>
-        {isEditing ? (
-          <textarea
-            ref={textareaRef}
-            value={editedDescription}
-            onChange={(e) => setEditedDescription(e.target.value)}
-            onKeyDown={handleEditKeyDown}
-            rows="4"
-            autoFocus
-            data-test="edit-input"
-          />
-        ) : (
-          <p data-test="description" className="description">
-            {post.description}{" "}
-            {post.hashtags.map((hashtag, index) => (
-              <span onClick={() => navigate(`/hashtag/${hashtag}`)} key={index} className="highlight">
-                #{hashtag}
-              </span>
-            ))}
-          </p>
-        )}
 
-        <div className="link" data-test="link">
-          <a href={post.link} target="_blank" rel="noopener noreferrer">
-            {post.urlData.title ? (
-              <>
-                <div className="linkText">
-                  <h2> {post.urlData.title}</h2>
-                  <h3>{post.urlData.description}</h3>
-                  <h4>{post.urlData.url}</h4>
-                </div>
-                <div className="linkImage">
-                  <img src={post.urlData.images[0]} alt="linkImage" />
-                </div>
-              </>) :
-              <>
-                <div className="linkText">
-                  <h1>{post.urlData.url}</h1>
-                </div>
-              </>}
-          </a>
-        </div>
-      </Publi>
-      <Modal
-        isOpen={isModalOpen}
-        onRequestClose={closeModal}
-        contentLabel="Delete Post Modal"
-        style={customStyles}
-      >
-        <ModalContent>
-          <p>Are you sure you want to delete this post?</p>
-          <button onClick={closeModal} disabled={isDeleting} data-test="cancel">
-            No, go back
-          </button>
-          <button onClick={handleDeletePost} disabled={isDeleting} data-test="confirm" >
-            {isDeleting ? "Deleting..." : "Yes, delete it"}
-          </button>
-        </ModalContent>
-      </Modal>
-    </BoxPublication>
+  return (
+    <>
+      {post.repost[0].reposted === true ?
+        <RepostConteiner>
+          <ion-icon name="repeat-outline" />
+          <h1>Re-posted by {post.repost[0].userId == userId ? <strong>you</strong> : <strong>{post.repost[0].userName}</strong>}</h1>
+        </RepostConteiner>
+        : <></>}
+      <BoxPublication data-test="post">
+        <Sider>
+          <img className="profleImg" src={post.ownerImage} />
+          {liked ? (
+            <FavoriteOutlinedIcon data-test="like-btn"
+              className="iconLiked"
+              onClick={handleUnikeClick}
+            />
+          ) : (
+            <FavoriteBorderOutlinedIcon data-test="like-btn"
+              className="iconNotLiked"
+              onClick={handleLikeClick}
+            />
+          )}
+          <p data-test="counter" className="likes">
+            {post.likes === 1 ? `${post.likes} like` : `${post.likes} likes`}
+          </p>
+          <ion-icon name="chatbubbles-outline" />
+          <p>3 comments</p>
+          <ion-icon name="repeat-outline" />
+          <p>{post.repost[0].repostCount} re-post</p>
+        </Sider>
+        <Publi>
+          <Container>
+            <p data-test="username" className="username" onClick={() => navigate(`/user/${post.userId}`)}>{post.ownerUsername}</p>
+            {`${post.userId}` === userId && (
+              <DeleteAndUpdate>
+                <ModeEditIcon className="iconEdit" onClick={handleEditClick} data-test="edit-btn" />
+                <DeleteSharpIcon className="iconDelete" onClick={openModal} data-test="delete-btn" />
+              </DeleteAndUpdate>
+            )}
+          </Container>
+          {isEditing ? (
+            <textarea
+              ref={textareaRef}
+              value={editedDescription}
+              onChange={(e) => setEditedDescription(e.target.value)}
+              onKeyDown={handleEditKeyDown}
+              rows="4"
+              autoFocus
+              data-test="edit-input"
+            />
+          ) : (
+            <p data-test="description" className="description">
+              {post.description}{" "}
+              {post.hashtags.map((hashtag, index) => (
+                <span onClick={() => navigate(`/hashtag/${hashtag}`)} key={index} className="highlight">
+                  #{hashtag}
+                </span>
+              ))}
+            </p>
+          )}
+
+          <div className="link" data-test="link">
+            <a href={post.link} target="_blank" rel="noopener noreferrer">
+              {post.urlData.title ? (
+                <>
+                  <div className="linkText">
+                    <h2> {post.urlData.title}</h2>
+                    <h3>{post.urlData.description}</h3>
+                    <h4>{post.urlData.url}</h4>
+                  </div>
+                  <div className="linkImage">
+                    <img src={post.urlData.images[0]} alt="linkImage" />
+                  </div>
+                </>) :
+                <>
+                  <div className="linkText">
+                    <h1>{post.urlData.url}</h1>
+                  </div>
+                </>}
+            </a>
+          </div>
+        </Publi>
+        <Modal
+          isOpen={isModalOpen}
+          onRequestClose={closeModal}
+          contentLabel="Delete Post Modal"
+          style={customStyles}
+        >
+          <ModalContent>
+            <p>Are you sure you want to delete this post?</p>
+            <button onClick={closeModal} disabled={isDeleting} data-test="cancel">
+              No, go back
+            </button>
+            <button onClick={handleDeletePost} disabled={isDeleting} data-test="confirm" >
+              {isDeleting ? "Deleting..." : "Yes, delete it"}
+            </button>
+          </ModalContent>
+        </Modal>
+      </BoxPublication>
+    </>
   );
 }
 
 export default Posts;
 
 const BoxPublication = styled.div`
-  width: 100%;
-  max-width: 611px;
-  background-color: #171717;
-  display: flex;
-  flex-direction: row;
-  padding: 10px 0 15px 0;
-  margin-bottom:20px;
+      width: 100%;
+      max-width: 611px;
+      background-color: #171717;
+      display: flex;
+      flex-direction: row;
+      padding: 10px 0 15px 0;
+      margin-bottom:20px;
 
-  line-height: normal;
+      line-height: normal;
 
-  @media (min-width: 611px) {
-    border-radius: 16px;
+      @media (min-width: 611px) {
+        border-radius: 16px;
   }
 
-  @media (min-width: 640px) {
-    padding: 20px 0 20px 0;
+      @media (min-width: 640px) {
+        padding: 20px 0 20px 0;
   }
-  ion-icon{
-    flex-shrink: 0;
-    color:#FFFFFF;
-    font-size: 25px;
-    margin-top:15px;
-    margin-bottom:2px;
+      ion-icon{
+        flex-shrink: 0;
+      color:#FFFFFF;
+      font-size: 25px;
+      margin-top:15px;
+      margin-bottom:2px;
   }
-`;
+      `;
 const Sider = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  img {
-    width: 40px;
-    height: 40px;
-    background-color: #ffffff;
-    border-radius: 50%;
-    margin: 0 15px 17px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      img {
+        width: 40px;
+      height: 40px;
+      background-color: #ffffff;
+      border-radius: 50%;
+      margin: 0 15px 17px;
   }
-  .likes {
-    color: #fff;
-    text-align: center;
-    font-family: Lato;
-    font-size: 9px;
-    font-weight: 400;
-
-    margin-top: 12px;
-  }
-  .iconNotLiked {
-    color: #ffffff;
-  }
-  .iconLiked {
-    color: #ff0000;
-  }
-  p{
-    color: #fff;
-    text-align: center;
-    font-family: Lato;
-    font-size: 11px;
-    font-weight: 400;
-  }
-  @media (min-width: 640px) {
-    img {
-      width: 50px;
-      height: 50px;
-    }
-    .likes {
-      font-size: 11px;
-    }
-  }
-`;
-const Publi = styled.div`
-  min-width: 288px;
-  max-width: calc(100% - 60px);
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 7px;
-  font-size: 15px;
-  margin-right: 18px;
-  .username {
-    color: #fff;
-    font-family: Lato;
-    font-size: 17px;
-    font-weight: 400;
-  }
-  .description {
-    color: #b7b7b7;
-    font-family: Lato;
-    font-size: 15px;
-    font-style: normal;
-    font-weight: 400;
-  }
-
-  .highlight {
-    color: #fff;
-    font-family: Lato;
-    font-size: 15px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: normal;
-    margin-left: 5px;
-  }
-  .link {
-    /* width: 100%;
-    height: 115px; */
-
-    display: flex;
-    /* flex-direction: row; */
-
-    border: 1px solid #4d4d4d;
-    border-radius: 11px;
-    margin-top: 7px;
-    padding: 11px;
-
-    overflow: hidden;
-
-    width: 503px;
-    height: 155px;
-    flex-shrink: 0;
-
-    a {
-      width:100%;
-      height:100%;
-      color: #cecece;
+      .likes {
+        color: #fff;
+      text-align: center;
       font-family: Lato;
       font-size: 9px;
-      font-style: normal;
       font-weight: 400;
-      line-height: normal;
-      display:flex;
-      justify-content:space-around;
-      position:relative;
-    }
 
-    .linkText {
-      position:absolute;
-      top:-12px;
-      left:0px;
-      width: 60%;
-      height: 100%;
+      margin-top: 12px;
+  }
+      .iconNotLiked {
+        color: #ffffff;
+  }
+      .iconLiked {
+        color: #ff0000;
+  }
+      p{
+        color: #fff;
+      text-align: center;
+      font-family: Lato;
+      font-size: 11px;
+      font-weight: 400;
+  }
+      @media (min-width: 640px) {
+        img {
+        width: 50px;
+      height: 50px;
+    }
+      .likes {
+        font-size: 11px;
+    }
+  }
+      `;
+const Publi = styled.div`
+      min-width: 288px;
+      max-width: calc(100% - 60px);
+
       display: flex;
       flex-direction: column;
       justify-content: center;
+      gap: 7px;
+      font-size: 15px;
+      margin-right: 18px;
+      .username {
+        color: #fff;
+      font-family: Lato;
+      font-size: 17px;
+      font-weight: 400;
+  }
+      .description {
+        color: #b7b7b7;
+      font-family: Lato;
+      font-size: 15px;
+      font-style: normal;
+      font-weight: 400;
+  }
+
+      .highlight {
+        color: #fff;
+        font-family: Lato;
+        font-size: 15px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: normal;
+        margin-left: 5px;
+      }
+      .link {
+        /* width: 100%;
+        height: 115px; */
+
+        display: flex;
+      /* flex-direction: row; */
+
+      border: 1px solid #4d4d4d;
+      border-radius: 11px;
+      margin-top: 7px;
+      padding: 11px;
+
+      overflow: hidden;
+
+      width: 503px;
+      height: 155px;
+      flex-shrink: 0;
+
+      a {
+        width:100%;
+        height:100%;
+        color: #cecece;
+        font-family: Lato;
+        font-size: 9px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        display:flex;
+        justify-content:space-around;
+        position:relative;
+    }
+
+      .linkText {
+        position:absolute;
+        top:-12px;
+        left:0px;
+        width: 60%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
       h1{
         margin-top:24px;
         margin-left:95px;
@@ -425,13 +431,13 @@ const Publi = styled.div`
       }
     }
 
-    .linkImage {
-      position:absolute;
-      top:-12px;
-      left:337px;
-      width: 154px;
-      height: 155px;
-      flex-shrink: 0;
+      .linkImage {
+        position:absolute;
+        top:-12px;
+        left:337px;
+        width: 154px;
+        height: 155px;
+        flex-shrink: 0;
       img{
         width: 153.44px;
         height: 155px;
@@ -444,76 +450,109 @@ const Publi = styled.div`
       flex-direction: column; */
     }
   }
-  @media (min-width: 640px) {
-    font-size: 17px;
-    .username {
-      font-size: 19px;
+      @media (min-width: 640px) {
+        font-size: 17px;
+      .username {
+        font-size: 19px;
     }
-    .link {
-      width: auto;
+      .link {
+        width: auto;
       width: 503px;
       font-size: 11px;
     }
   }
-`;
-
+      `;
 const Container = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  .username {
-  color: #fff;
-  font-family: Lato;
-  font-size: 17px;
-  font-weight: 400;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .username {
+        color: #fff;
+      font-family: Lato;
+      font-size: 17px;
+      font-weight: 400;
 
 }
-`
+      `
 const DeleteAndUpdate = styled.div`
-  .iconEdit {
-    color: #ffffff;
+      .iconEdit {
+        color: #ffffff;
   }
-  .iconDelete {
-    color: #ffffff;
+      .iconDelete {
+        color: #ffffff;
   }
-`
-
+      `
 const ModalContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background-color: #333333;
-  border-radius: 8px;
-  max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background-color: #333333;
+      border-radius: 8px;
+      max-width: 600px;
 
-  p {
-    font-size: 18px;
-    margin-bottom: 20px;
+      p {
+        font-size: 18px;
+      margin-bottom: 20px;
   }
 
-  button {
-    margin-top: 10px;
-    padding: 8px 16px;
-    border: none;
-    background-color: #ffffff;
-    color: #1877F2;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    border-radius: 5px;
+      button {
+        margin-top: 10px;
+      padding: 8px 16px;
+      border: none;
+      background-color: #ffffff;
+      color: #1877F2;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      border-radius: 5px;
   }
 
-  button:hover{
-    color: #ffffff;
-    background-color: #1877F2;
+      button:hover{
+        color: #ffffff;
+      background-color: #1877F2;
   }
 
-  button:first-child {
-    background-color: #e0e0e0;
-    color: #333;
-    margin-right: 10px;
+      button:first-child {
+        background-color: #e0e0e0;
+      color: #333;
+      margin-right: 10px;
   }
-`;
+      `;
+const RepostConteiner = styled.div`
+      height:33px;
+      width: 611px;
 
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+      margin-bottom:-27px;
+      background: #1E1E1E;
+
+      display:flex;
+      padding-left:13px;
+      padding-top:4px;
+      box-sizing:border-box;
+
+      h1{
+        color: #FFF;
+        font-family: Lato;
+        font-size: 11px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        strong{
+          color: #FFF;
+        font-family: Lato;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: bold;
+        line-height: normal;
+    }
+  }
+
+      ion-icon{
+        font-size:20px;
+        margin-right:6px;
+  }
+      `;
