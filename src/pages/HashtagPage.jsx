@@ -47,13 +47,7 @@ export default function HashtagPage() {
             {postsByTag.length === 0 ? (
               <p className="noPosts">Sem posts até o momento</p>
             ) : (
-              postsByTag.map((postsByTag) => (
-                <Posts
-                  key={postsByTag.id}
-                  post={postsByTag}
-                  like={postsByTag.liked}
-                />
-              ))
+              postsByTag.map((postsByTag) => <Posts key={postsByTag.id} />)
             )}
           </PostColumn>
           <TrendingWrapper>
