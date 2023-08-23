@@ -69,6 +69,12 @@ export default function ProfilePage() {
   };
 
   useEffect(() => {
+    const fetchCheckUser = (id) => {
+      if (id == userId) {
+        setCheckUser(false);
+      }
+    };
+
     const fetchUserProfile = async (userId) => {
       try {
         const response = await axios.get(
@@ -76,15 +82,9 @@ export default function ProfilePage() {
         );
         setUserProfile(response.data);
         setIsFollowing(response.data.isFollowing);
-        fetchCheckUser(response.data);
+        fetchCheckUser(response.data.id);
       } catch (error) {
         console.log(error.response.data);
-      }
-    };
-
-    const fetchCheckUser = (profileData) => {
-      if (profileData.id === userId) {
-        setCheckUser(false);
       }
     };
 
