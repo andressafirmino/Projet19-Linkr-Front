@@ -73,6 +73,9 @@ export default function TimeLinePage() {
   const filteredPosts = posts.filter((post) =>
     followingUserIds.includes(post.userId)
   );
+  console.log("followingUserIds", followingUserIds.length)
+  console.log("posts", posts.length)
+
 
   return (
     <PageContainer>
@@ -128,26 +131,17 @@ export default function TimeLinePage() {
             </PostContainer>
 
             <PostList>
-              {/* {!filtering ? (
-                <p className="noPosts">Carregando...</p>
-              ) : filtering && filteredPosts.length === 0 ? (
-                followingUserIds.length === 0 ? (
-                  <p className="noPosts">
-                    Você ainda não segue ninguém. Procure por novos amigos!
-                  </p>
-                ) : (
-                  <p className="noPosts">Sem post dos seus amigos</p>
-                )
-              ) : (
-                filteredPosts.map((post) => <Posts key={post.id} post={post} />)
-              )} */}
-              {posts.length === 0 ? (
-                <p className="noPosts" data-test="message">
-                  There are no posts yet
-                </p>
-              ) : (
+              {posts.length === 0 && followingUserIds.length > 0 ? (
+                <p className="noPosts">
+                  No posts found from your friends
+                </p>) : (
                 posts.map((post) => <Posts key={post.id} post={post} />)
-              )}
+              )
+              }
+              {posts.length === 0 && followingUserIds.length === 0 ? (
+                <p className="noPosts">
+                  You don't follow anyone yet. Search for new friends!
+                </p>) : (<></>)}
             </PostList>
           </Content>
           <TrendingWrapper>
