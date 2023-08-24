@@ -8,19 +8,31 @@ export function PostsProvider({ children }) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const { userId } = useContext(UserDataContext);
+  const [hasMore, setHasMore] = useState(true);
 
-  async function fetchPosts() {
-    const url = `${process.env.REACT_APP_API_URL}/posts/?userId=${userId}`;
+  async function fetchPosts(page) {
+    const postsPerPage = 10;
+
+    if (page < 0) return;
+
+    const url = `${process.env.REACT_APP_API_URL}/posts/?userId=${userId}&page=${page}`;
 
     setLoading(true);
     try {
       const response = await axios.get(url);
 
-      if (response.data.length > 20) {
-        const res = response.data.slice(0, 20);
-        setPosts(res);
+      if (response.data.length > 0) {
+        const newPosts = response.data;
+  
+        if (newPosts.length < postsPerPage) {
+          setPosts([...posts, ...newPosts]);
+          setHasMore(false);
+        } else {
+          setPosts([...posts, ...newPosts]);
+          setHasMore(true);
+        }
       } else {
-        setPosts(response.data);
+        setHasMore(false);
       }
     } catch (error) {
       alert("Houve uma falha ao obter os posts. Por favor, atualize a página.");

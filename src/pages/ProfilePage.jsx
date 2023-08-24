@@ -9,6 +9,7 @@ import { usePosts } from "../context/PostsContext";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { UserDataContext } from "../context/UserDataContext";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 export default function ProfilePage() {
   const { setOpen, setRotate } = useContext(MenuContext);
@@ -19,16 +20,23 @@ export default function ProfilePage() {
   const { userId } = useContext(UserDataContext);
   const [isFollowing, setIsFollowing] = useState(false);
   const [disable, setDisable] = useState(false);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const postsPerPage = 10;
+  const [dataSource, setDataSource] = useState([]);
+
+  //console.log(posts);
 
   useEffect(() => {
     setOpen("none");
     setRotate("rotate(0)");
-    fetchPosts();
-  }, [setOpen, setRotate]);
+    fetchPosts(page);
+  }, [setOpen, setRotate, fetchPosts, page]);
 
   const profileId = parseInt(id);
 
   const userPosts = posts.filter((post) => post.userId === profileId);
+  //console.log(userPosts);
 
   const handleFollowClick = async () => {
     setDisable(true);
@@ -77,6 +85,12 @@ export default function ProfilePage() {
         setUserProfile(response.data);
         setIsFollowing(response.data.isFollowing);
         fetchCheckUser(response.data);
+
+        if (response.data.userPostsCount > (page + 1) * postsPerPage) {
+          setHasMore(true);
+        } else {
+          setHasMore(false);
+        }
       } catch (error) {
         console.log(error.response.data);
       }
@@ -90,6 +104,58 @@ export default function ProfilePage() {
 
     fetchUserProfile(userId);
   }, [id, userId]);
+
+  /* useEffect(() => {
+    const startIndex = page * postsPerPage;
+    const endIndex = startIndex + postsPerPage;
+    setPostsToRender(userPosts.slice(startIndex, endIndex));
+
+  }, [userPosts, page]);
+
+  const loadMorePosts = () => {
+    setPage(page + 1);
+  };
+
+  const renderPosts = () => {
+    if (postsToRender.length === 0) {
+      return <p className="noPosts">No posts to display</p>;
+    }
+
+    return postsToRender.map((post) => (
+      <Posts
+        key={post.id}
+        post={post}
+        liked={post.liked}
+      />
+    ));
+  }; */
+  
+  const fetchMoreData = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/posts/?userId=${userId}&page=${page + 1}`
+      );
+
+      if (response.data.length < 10) {
+        setHasMore(false);
+      } else {
+        setPage(page + 1); // Aumente o número da página
+        setUserProfile((prevProfile) => {
+          // Atualize o estado userProfile com os novos posts
+          if (prevProfile) {
+            return {
+              ...prevProfile,
+              userPosts: [...prevProfile.userPosts, ...response.data],
+            };
+          }
+          return prevProfile;
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
 
   return (
     <PageContainer>
@@ -122,14 +188,25 @@ export default function ProfilePage() {
       ) : null}
       <Window>
         <ProfileContainer>
-          {userProfile && userPosts.length === 0 ? (
-            <p className="noPosts">Sem posts até o momento</p>
-          ) : null}
-          {userProfile
-            ? userPosts.map((post) => (
-                <Posts key={post.id} post={post} like={post.liked} />
-              ))
-            : null}
+          {userProfile ? (
+            <InfiniteScroll
+              dataLength={userProfile.userPosts.length}
+              next={fetchMoreData}
+              hasMore={hasMore}
+              loader={<h4>Loading...</h4>}
+              endMessage={<p>No more posts</p>}
+            >
+              {userProfile.userPosts.map((post) => (
+                <Posts
+                  key={post.id}
+                  post={post}
+                  liked={post.liked}
+                />
+              ))}
+            </InfiniteScroll>
+          ) : (
+            <p className="noPosts">No posts to display</p>
+          )}
         </ProfileContainer>
         <TrendingWrapper>
           <Trending />
