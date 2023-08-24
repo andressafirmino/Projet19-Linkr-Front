@@ -35,7 +35,6 @@ export default function SearchUser() {
     }
   }
 
-  console.log(usersList);
 
   return (
     <SearchContainer>

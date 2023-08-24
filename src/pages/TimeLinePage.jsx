@@ -128,7 +128,7 @@ export default function TimeLinePage() {
             </PostContainer>
 
             <PostList>
-              {!filtering ? (
+              {/* {!filtering ? (
                 <p className="noPosts">Carregando...</p>
               ) : filtering && filteredPosts.length === 0 ? (
                 followingUserIds.length === 0 ? (
@@ -140,6 +140,13 @@ export default function TimeLinePage() {
                 )
               ) : (
                 filteredPosts.map((post) => <Posts key={post.id} post={post} />)
+              )} */}
+              {posts.length === 0 ? (
+                <p className="noPosts" data-test="message">
+                  There are no posts yet
+                </p>
+              ) : (
+                posts.map((post) => <Posts key={post.id} post={post} />)
               )}
             </PostList>
           </Content>

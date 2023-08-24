@@ -49,7 +49,6 @@ export default function HashtagPage() {
             ) : (
               postsByTag.map(
                 (postByTag) => (
-                  console.log(postByTag),
                   (<Posts key={postByTag.id} post={postByTag} />)
                 )
               )
