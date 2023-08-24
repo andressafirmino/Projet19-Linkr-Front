@@ -10,7 +10,7 @@ export function PostsProvider({ children }) {
   const { userId } = useContext(UserDataContext);
 
   async function fetchPosts() {
-    const url = `${process.env.REACT_APP_API_URL}/posts/?userId=${userId}`;
+    const url = `${process.env.REACT_APP_API_URL}/timeline/?userId=${userId}`;
 
     setLoading(true);
     try {
