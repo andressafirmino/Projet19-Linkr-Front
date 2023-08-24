@@ -6,20 +6,17 @@ import axios from "axios";
 import { UserDataContext } from "../context/UserDataContext";
 import { usePosts } from "../context/PostsContext";
 import Posts from "../components/Posts";
-import SearchUser from "../components/Search";
 import Trending from "../components/Trending";
 
 export default function TimeLinePage() {
+  const { posts, fetchPosts } = usePosts();
   const { setOpen, setRotate, setClosedSearch } = useContext(MenuContext);
   const { token, userId, userImage } = useContext(UserDataContext);
   const [link, setLink] = useState("");
   const [description, setDescription] = useState("");
   const [disabled, setDisabled] = useState(false);
-  const { posts, loading, fetchPosts } = usePosts();
-
-  useEffect(() => {
-    fetchPosts();
-  }, []);
+  const [followingUserIds, setFollowingUserIds] = useState([]);
+  const [filtering, setFiltering] = useState(false);
 
   function publicPost(e) {
     e.preventDefault();
@@ -51,9 +48,34 @@ export default function TimeLinePage() {
       });
   }
 
+  async function fetchFollowPosts(userId) {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/following/${userId}`
+      );
+      const followingIds = response.data.following.map((user) => user.id);
+      setFollowingUserIds(followingIds);
+    } catch (error) {
+      console.error("Erro ao obter os posts dos usuários seguidos:", error);
+    }
+  }
+
+  useEffect(() => {
+    async function fetchData() {
+      await fetchPosts();
+      await fetchFollowPosts(userId);
+      setFiltering(true);
+    }
+
+    fetchData();
+  }, [userId]);
+
+  const filteredPosts = posts.filter((post) =>
+    followingUserIds.includes(post.userId)
+  );
+
   return (
     <PageContainer>
-      {loading ? <p>Carregando...</p> : null}
       <Header />
 
       <Windown
@@ -104,13 +126,20 @@ export default function TimeLinePage() {
                 </form>
               </BoxPost>
             </PostContainer>
+
             <PostList>
-              {posts.length === 0 ? (
-                <p className="noPosts" data-test="message">
-                  There are no posts yet
-                </p>
+              {!filtering ? (
+                <p className="noPosts">Carregando...</p>
+              ) : filtering && filteredPosts.length === 0 ? (
+                followingUserIds.length === 0 ? (
+                  <p className="noPosts">
+                    Você ainda não segue ninguém. Procure por novos amigos!
+                  </p>
+                ) : (
+                  <p className="noPosts">Sem post dos seus amigos</p>
+                )
               ) : (
-                posts.map((post) => <Posts key={post.id} post={post} />)
+                filteredPosts.map((post) => <Posts key={post.id} post={post} />)
               )}
             </PostList>
           </Content>

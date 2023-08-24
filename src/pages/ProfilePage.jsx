@@ -126,9 +126,7 @@ export default function ProfilePage() {
             <p className="noPosts">Sem posts até o momento</p>
           ) : null}
           {userProfile
-            ? userPosts.map((post) => (
-                <Posts key={post.id} post={post} like={post.liked} />
-              ))
+            ? userPosts.map((post) => <Posts key={post.id} post={post} />)
             : null}
         </ProfileContainer>
         <TrendingWrapper>
