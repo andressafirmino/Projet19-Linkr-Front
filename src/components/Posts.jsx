@@ -203,7 +203,7 @@ function Posts({ post }) {
 
           <div className="link" data-test="link">
             <a href={post.link} target="_blank" rel="noopener noreferrer">
-              {post.urlData.title ? (
+              {post.urlData.images[0] ? (
                 <>
                   <div className="linkText">
                     <h2> {post.urlData.title}</h2>
