@@ -35,6 +35,8 @@ export default function SearchUser() {
     }
   }
 
+  console.log(usersList);
+
   return (
     <SearchContainer>
       <BoxSearch
@@ -71,6 +73,7 @@ export default function SearchUser() {
             >
               <img src={user.image} />
               <p>{user.username}</p>
+              {user.following && <p className="follow"> • following</p>}
             </div>
           ))}
         </Suggestions>
@@ -173,6 +176,12 @@ const Suggestions = styled.div`
       font-weight: 400;
       font-family: "Lato", sans-serif;
       color: #515151;
+      margin-right: 7px;
+    }
+
+    .follow {
+      margin: 0;
+      color: #c5c5c5;
     }
   }
   @media screen and (min-width: 563px) {
