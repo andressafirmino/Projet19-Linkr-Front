@@ -11,14 +11,21 @@ import InfiniteScroll from "react-infinite-scroller";
 
 export default function TimeLinePage() {
   const { posts, loading, fetchPosts, hasMore } = usePosts();
-  const { setOpen, setRotate, setClosedSearch, closedComments, setClosedComments } = useContext(MenuContext);
+  const {
+    setOpen,
+    setRotate,
+    setClosedSearch,
+    closedComments,
+    setClosedComments,
+  } = useContext(MenuContext);
   const { token, userId, userImage } = useContext(UserDataContext);
   const [link, setLink] = useState("");
   const [description, setDescription] = useState("");
   const [disabled, setDisabled] = useState(false);
   const [followingUserIds, setFollowingUserIds] = useState([]);
   const [filtering, setFiltering] = useState(false);
-  const [localClosedComments, setLocalClosedComments] = useState(closedComments);
+  const [localClosedComments, setLocalClosedComments] =
+    useState(closedComments);
 
   function publicPost(e) {
     e.preventDefault();
@@ -62,6 +69,10 @@ export default function TimeLinePage() {
     }
   }
 
+  const handleUpdateClick = () => {
+    console.log(posts);
+  };
+
   useEffect(() => {
     async function fetchData() {
       await fetchPosts();
@@ -71,12 +82,6 @@ export default function TimeLinePage() {
 
     fetchData();
   }, [userId]);
-
-  const filteredPosts = posts.filter((post) =>
-    followingUserIds.includes(post.userId)
-  );
-  //console.log("followingUserIds", followingUserIds.length)
-  //console.log("posts", posts.length)
 
   return (
     <PageContainer>
@@ -131,6 +136,10 @@ export default function TimeLinePage() {
                 </form>
               </BoxPost>
             </PostContainer>
+            <button className="updateBTN" onClick={handleUpdateClick}>
+              <p>12 new posts, load more!</p>
+              <img src="/updateIcon.svg" />
+            </button>
             <InfiniteScroll
               pageStart={0}
               loadMore={fetchPosts}
@@ -190,6 +199,25 @@ const Windown = styled.div`
     line-height: normal;
 
     text-align: -webkit-center;
+  }
+  .updateBTN {
+    height: 61px;
+
+    border: none;
+    border-radius: 16px;
+    background: #1877f2;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+
+    color: #ffffff;
+    font-size: 16px;
+    p {
+      margin-right: 14px;
+    }
   }
   @media (min-width: 640px) {
     .noPosts {
