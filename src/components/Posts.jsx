@@ -9,10 +9,12 @@ import axios from "axios";
 import { usePosts } from "../context/PostsContext";
 import { useNavigate } from "react-router-dom";
 import Modal from 'react-modal';
+import { HashtagContext } from "../context/HashtagContext";
+import { MenuContext } from "../context/MenuContext";
 
 function Posts({ post }) {
   const [liked, setLiked] = useState(post.liked);
-  const { userId, token } = useContext(UserDataContext);
+  const { userId, token, userImage } = useContext(UserDataContext);
   const { fetchPosts } = usePosts();
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,6 +25,7 @@ function Posts({ post }) {
   const [editedDescription, setEditedDescription] = useState(post.description);
   const [openComments, setOpenComments] = useState(false);
   const [comment, setComment] = useState('');
+  const {setAtt} = useContext(HashtagContext);
 
   const textareaRef = useRef(null);
 
@@ -136,7 +139,6 @@ function Posts({ post }) {
         alert("Não foi possível salvar as alterações. Tente novamente mais tarde.");
       });
   };
-  console.log(post);
   const addComment = (e) => {
     e.preventDefault();
 
@@ -152,6 +154,7 @@ function Posts({ post }) {
       })
       .then(() => {
         setComment("");
+        setAtt(true);
         fetchPosts();
       })
       .catch((e) => {
@@ -190,7 +193,8 @@ function Posts({ post }) {
             <p data-test="counter" className="likes">
               {post.likes === 1 ? `${post.likes} like` : `${post.likes} likes`}
             </p>
-            <ion-icon name="chatbubbles-outline" onClick={() => setOpenComments(true)} data-test="comment-btn"/>
+            <ion-icon name="chatbubbles-outline" onClick={() => {setOpenComments(openComments ? false : true);        
+        }} data-test="comment-btn"/>
             <p data-test="comment-counter">{post.comments.length === 1 ? `${post.comments.length} comment` : `${post.comments.length} comments`}</p>
             <ion-icon data-test="repost-btn" onClick={() => setIsModalOpenShared(true)} name="repeat-outline" />
             <p data-test="repost-counter">{post.repost[0].repostCount} re-post</p>
@@ -228,7 +232,7 @@ function Posts({ post }) {
 
             <div className="link" data-test="link">
               <a href={post.link} target="_blank" rel="noopener noreferrer">
-                {post.urlData.title ? (
+                {post.urlData.title !== null && post.urlData.title ? (
                   <>
                     <div className="linkText">
                       <h2> {post.urlData.title}</h2>
@@ -296,7 +300,7 @@ function Posts({ post }) {
           </Modal>
         </BoxPublication >
         {openComments && (
-          <BoxComments data-test="comment-box">
+          <BoxComments data-test="comment-box" >
             {post.comments && post.comments.map((comment, index) => (
               <div className="comment" key={index} data-test="comment" >
                 <img src={comment.image} />
@@ -315,7 +319,7 @@ function Posts({ post }) {
               </div>
             ))}
             <div className="add-comment">
-              <img src={post.ownerImage} />
+              <img src={userImage} />
               <form onSubmit={addComment}>
                 <input placeholder="write a comment..." type="text"
                   required value={comment} onChange={(e) => setComment(e.target.value)} data-test="comment-input"/>
@@ -326,9 +330,7 @@ function Posts({ post }) {
             </div>
           </BoxComments>
         )}
-
-      </ContainerPost>
-    
+      </ContainerPost>    
   );
 }
 

@@ -1,34 +1,26 @@
-import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { styled } from "styled-components";
 import Header from "../components/Header";
 import { MenuContext } from "../context/MenuContext";
-import { UserDataContext } from "../context/UserDataContext";
 import { HashtagContext } from "../context/HashtagContext";
 import Posts from "../components/Posts";
 import Trending from "../components/Trending";
+import { usePosts } from "../context/PostsContext";
 
 export default function HashtagPage() {
+  
+  const { setOpen, setRotate, setClosedSearch } = useContext(MenuContext);
+  const { tags, postsByTag, getPostByTag, att, setAtt } = useContext(HashtagContext);
   const { hashtag } = useParams();
-  const { userId } = useContext(UserDataContext);
-  const { setOpen, setRotate } = useContext(MenuContext);
-  const { tags } = useContext(HashtagContext);
-  const [postsByTag, setPostsByTag] = useState([]);
+  const { fetchPosts } = usePosts();
 
-  async function getPostByTag() {
-    const url = `${process.env.REACT_APP_API_URL}/hashtag/${hashtag}/${userId}`;
-    try {
-      const promise = await axios.get(url);
-      setPostsByTag(promise.data);
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   useEffect(() => {
-    getPostByTag();
-  }, [tags]);
+    getPostByTag(hashtag);
+    setAtt(false);
+    fetchPosts();
+  }, [tags, att]);
 
   return (
     <>
@@ -37,6 +29,7 @@ export default function HashtagPage() {
         onClick={() => {
           setOpen("none");
           setRotate("rotate(0)");
+          setClosedSearch("none");
         }}
       >
         <Title data-test="hashtag-title">

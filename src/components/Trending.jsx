@@ -6,7 +6,7 @@ import { HashtagContext } from "../context/HashtagContext";
 
 export default function Trending({ props }) {
   const [trendingHashtags, setTrendingHashtags] = useState([]);
-  const { tags, setTags } = useContext(HashtagContext);
+  const { tags, setTags, getPostsByTag } = useContext(HashtagContext);
 
   useEffect(() => {
     axios
@@ -28,7 +28,8 @@ export default function Trending({ props }) {
       <TrendingHashtags>
         {trendingHashtags.map((hashtag, index) => (
           <Link
-            onClick={() => setTags(tags + 1)}
+            onClick={() => {setTags(tags + 1)
+            getPostsByTag(hashtag.hashtag)}}
             to={`/hashtag/${hashtag.hashtag}`}
             key={index}
           >
