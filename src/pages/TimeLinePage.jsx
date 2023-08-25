@@ -11,13 +11,14 @@ import InfiniteScroll from "react-infinite-scroller";
 
 export default function TimeLinePage() {
   const { posts, loading, fetchPosts, hasMore } = usePosts();
-  const { setOpen, setRotate, setClosedSearch } = useContext(MenuContext);
+  const { setOpen, setRotate, setClosedSearch, closedComments, setClosedComments } = useContext(MenuContext);
   const { token, userId, userImage } = useContext(UserDataContext);
   const [link, setLink] = useState("");
   const [description, setDescription] = useState("");
   const [disabled, setDisabled] = useState(false);
   const [followingUserIds, setFollowingUserIds] = useState([]);
   const [filtering, setFiltering] = useState(false);
+  const [localClosedComments, setLocalClosedComments] = useState(closedComments);
 
   function publicPost(e) {
     e.preventDefault();
@@ -86,6 +87,7 @@ export default function TimeLinePage() {
           setOpen("none");
           setRotate("rotate(0)");
           setClosedSearch("none");
+          setLocalClosedComments("none");
         }}
       >
         <Title>

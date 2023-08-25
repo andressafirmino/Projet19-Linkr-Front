@@ -11,7 +11,7 @@ import { useParams } from "react-router-dom";
 import { UserDataContext } from "../context/UserDataContext";
 
 export default function ProfilePage() {
-  const { setOpen, setRotate } = useContext(MenuContext);
+  const { setOpen, setRotate, setClosedSearch } = useContext(MenuContext);
   const { id } = useParams();
   const { posts, fetchPosts } = usePosts();
   const [userProfile, setUserProfile] = useState(null);
@@ -93,7 +93,7 @@ export default function ProfilePage() {
 
   return (
     <PageContainer>
-      <Header />
+      <Header />      
       <SearchUser />
       {userProfile ? (
         <UserInfo>
@@ -125,7 +125,11 @@ export default function ProfilePage() {
             ))}
         </UserInfo>
       ) : null}
-      <Window>
+      <Window onClick={() => {
+          setOpen("none");
+          setRotate("rotate(0)");
+          setClosedSearch("none");
+        }}>        
         <ProfileContainer>
           {userProfile && userPosts.length === 0 ? (
             <p className="noPosts">Sem posts até o momento</p>
