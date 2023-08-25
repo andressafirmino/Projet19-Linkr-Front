@@ -10,18 +10,25 @@ import Trending from "../components/Trending";
 import InfiniteScroll from "react-infinite-scroller";
 import { HashtagContext } from "../context/HashtagContext";
 
-
 export default function TimeLinePage() {
   const { posts, loading, fetchPosts, hasMore } = usePosts();
-  const { setOpen, setRotate, setClosedSearch, closedComments, setClosedComments } = useContext(MenuContext);
+  const {
+    setOpen,
+    setRotate,
+    setClosedSearch,
+    closedComments,
+    setClosedComments,
+  } = useContext(MenuContext);
   const { token, userId, userImage } = useContext(UserDataContext);
   const [link, setLink] = useState("");
   const [description, setDescription] = useState("");
   const [disabled, setDisabled] = useState(false);
   const [followingUserIds, setFollowingUserIds] = useState([]);
   const [filtering, setFiltering] = useState(false);
-  const { tags, postsByTag, getPostByTag, att, setAtt } = useContext(HashtagContext);
-  const [localClosedComments, setLocalClosedComments] = useState(closedComments);
+  const { tags, postsByTag, getPostByTag, att, setAtt } =
+    useContext(HashtagContext);
+  const [localClosedComments, setLocalClosedComments] =
+    useState(closedComments);
 
   function publicPost(e) {
     e.preventDefault();
@@ -66,17 +73,10 @@ export default function TimeLinePage() {
   }
 
   useEffect(() => {
-
     fetchPosts();
     fetchFollowPosts(userId);
-    setAtt(false)
+    setAtt(false);
   }, [userId, att]);
-
-  const filteredPosts = posts.filter((post) =>
-    followingUserIds.includes(post.userId)
-  );
-  //console.log("followingUserIds", followingUserIds.length)
-  //console.log("posts", posts.length)
 
   return (
     <PageContainer>
