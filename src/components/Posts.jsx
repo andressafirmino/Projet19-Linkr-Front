@@ -338,43 +338,49 @@ function Posts({ post }) {
           style={customStyles}
         >
           <ModalContent>
-            <p>Do you want to re-post this link?</p>
-            <button
-              onClick={() => {
-                setIsModalOpenShared(false);
-              }}
-              disabled={sharing}
-              data-test="cancel"
-            >
-              No, cancel
-            </button>
-            <button
-              onClick={() => {
-                setSharing(true);
+            <p style={{ color: "#fff", fontFamily: "Lato", fontSize: "29px" }}>
+              Do you want to re-post this link?
+            </p>
+            <ButtonsContainer>
+              <button
+                style={{ color: "#1877f2", backgroundColor: "#ffffff" }}
+                onClick={() => {
+                  setIsModalOpenShared(false);
+                }}
+                disabled={sharing}
+                data-test="cancel"
+              >
+                No, cancel
+              </button>
+              <button
+                style={{ backgroundColor: "#1877f2", color: "#ffffff" }}
+                onClick={() => {
+                  setSharing(true);
 
-                axios
-                  .put(
-                    `${process.env.REACT_APP_API_URL}/repost/${post.id}/${userId}`
-                  )
-                  .then(() => {
-                    setIsModalOpenShared(false);
-                    fetchPosts();
-                    setSharing(false);
-                  })
-                  .catch((error) => {
-                    console.error("Erro ao deletar o post:", error);
-                    setIsModalOpenShared(false);
-                    setSharing(false);
-                    alert(
-                      "Não foi possivel re-postar. Tente novamente mais tarde."
-                    );
-                  });
-              }}
-              disabled={sharing}
-              data-test="confirm"
-            >
-              {isDeleting ? "Deleting..." : "Yes, share!"}
-            </button>
+                  axios
+                    .put(
+                      `${process.env.REACT_APP_API_URL}/repost/${post.id}/${userId}`
+                    )
+                    .then(() => {
+                      setIsModalOpenShared(false);
+                      fetchPosts();
+                      setSharing(false);
+                    })
+                    .catch((error) => {
+                      console.error("Erro ao deletar o post:", error);
+                      setIsModalOpenShared(false);
+                      setSharing(false);
+                      alert(
+                        "Não foi possivel re-postar. Tente novamente mais tarde."
+                      );
+                    });
+                }}
+                disabled={sharing}
+                data-test="confirm"
+              >
+                {isDeleting ? "Deleting..." : "Yes, share!"}
+              </button>
+            </ButtonsContainer>
           </ModalContent>
         </Modal>
       </BoxPublication>
