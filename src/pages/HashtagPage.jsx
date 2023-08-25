@@ -1,26 +1,28 @@
-import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { styled } from "styled-components";
 import Header from "../components/Header";
 import { MenuContext } from "../context/MenuContext";
-import { UserDataContext } from "../context/UserDataContext";
 import { HashtagContext } from "../context/HashtagContext";
 import Posts from "../components/Posts";
 import Trending from "../components/Trending";
-import InfiniteScroll from 'react-infinite-scroller';
+import InfiniteScroll from "react-infinite-scroller";
+import { usePosts } from "../context/PostsContext";
+import { UserDataContext } from "../context/UserDataContext";
+import axios from "axios";
 
 export default function HashtagPage() {
+  const { setOpen, setRotate, setClosedSearch } = useContext(MenuContext);
+  const { tags, postsByTag, getPostByTag, att, setAtt } =
+    useContext(HashtagContext);
   const { hashtag } = useParams();
   const { userId } = useContext(UserDataContext);
-  const { setOpen, setRotate } = useContext(MenuContext);
-  const { tags } = useContext(HashtagContext);
-  const [postsByTag, setPostsByTag] = useState([]);
-  const [ hasMore, setHasMore ] = useState(true);
-  const [ page, setPage ] = useState(1);
-  const [ loading, setLoading ] = useState(false);
+  const [postByTagScroll, setPostByTagScroll] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
 
-  async function getPostByTag() {
+  async function getPostByTagScroll() {
     const url = `${process.env.REACT_APP_API_URL}/hashtag/${hashtag}/${userId}?page=${page}`;
 
     setLoading(true);
@@ -28,12 +30,15 @@ export default function HashtagPage() {
       const response = await axios.get(url);
       //console.log(response.data);
 
-      if(response.data.length === 0) {
+      if (response.data.length === 0) {
         setHasMore(false);
       } else {
-        const newPosts = filterDuplicates([...postsByTag, ...response.data]);
+        const newPosts = filterDuplicates([
+          ...postByTagScroll,
+          ...response.data,
+        ]);
 
-        setPostsByTag(newPosts);
+        setPostByTagScroll(newPosts);
         setPage(page + 1);
         setHasMore(true);
       }
@@ -43,16 +48,16 @@ export default function HashtagPage() {
       setLoading(false);
     }
   }
-  
+
   function compareObjects(obj1, obj2) {
     return JSON.stringify(obj1) === JSON.stringify(obj2);
   }
 
   function hasDuplicate(arr, obj) {
     for (let i = 0; i < arr.length; i++) {
-        if (compareObjects(arr[i], obj)) {
-            return true;
-        }
+      if (compareObjects(arr[i], obj)) {
+        return true;
+      }
     }
     return false;
   }
@@ -61,9 +66,9 @@ export default function HashtagPage() {
     const uniqueObjects = [];
 
     for (let i = 0; i < arr.length; i++) {
-        if (!hasDuplicate(uniqueObjects, arr[i])) {
-            uniqueObjects.push(arr[i]);
-        }
+      if (!hasDuplicate(uniqueObjects, arr[i])) {
+        uniqueObjects.push(arr[i]);
+      }
     }
 
     return uniqueObjects;
@@ -71,10 +76,14 @@ export default function HashtagPage() {
 
   useEffect(() => {
     async function fetchData() {
-      await getPostByTag();
+      await getPostByTagScroll();
     }
     fetchData();
   }, [tags, page]);
+
+  useEffect(() => {
+    setAtt(false);
+  }, [tags, att]);
 
   return (
     <>
@@ -83,6 +92,7 @@ export default function HashtagPage() {
         onClick={() => {
           setOpen("none");
           setRotate("rotate(0)");
+          setClosedSearch("none");
         }}
       >
         <Title data-test="hashtag-title">
@@ -91,19 +101,17 @@ export default function HashtagPage() {
         <Content>
           <InfiniteScroll
             pageStart={0}
-            loadMore={getPostByTag}
+            loadMore={getPostByTagScroll}
             hasMore={hasMore}
             loader={loading ? <p>Loading ...</p> : null}
           >
             <PostColumn>
-              {postsByTag.length === 0 ? (
+              {postByTagScroll.length === 0 ? (
                 <p className="noPosts">Sem posts até o momento</p>
               ) : (
-                postsByTag.map(
-                  (postByTag) => (
-                    (<Posts key={postByTag.id} post={postByTag} />)
-                  )
-                )
+                postByTagScroll.map((post) => (
+                  <Posts key={post.id} post={post} />
+                ))
               )}
             </PostColumn>
           </InfiniteScroll>

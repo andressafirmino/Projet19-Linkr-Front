@@ -11,7 +11,7 @@ import { UserDataContext } from "../context/UserDataContext";
 import InfiniteScroll from "react-infinite-scroller";
 
 export default function ProfilePage() {
-  const { setOpen, setRotate } = useContext(MenuContext);
+  const { setOpen, setRotate, setClosedSearch } = useContext(MenuContext);
   const { id } = useParams();
   const [userProfile, setUserProfile] = useState(null);
   const [checkUser, setCheckUser] = useState(true);
@@ -72,12 +72,19 @@ export default function ProfilePage() {
       const response = await axios.get(
         `${process.env.REACT_APP_API_URL}/user/${id}?userId=${userId}&page=${page}`
       );
-      console.log(response.data);
 
-      if(response.data.response.length === 0) {
+      if (response.status === 204) {
+        setHasMore(false);
+        return;
+      }
+      if (response.data.response.length === 0) {
+        console.log(response.data.response.length);
         setHasMore(false);
       } else {
-        const newPosts = filterDuplicates([...userPosts, ...response.data.response]);
+        const newPosts = filterDuplicates([
+          ...userPosts,
+          ...response.data.response,
+        ]);
 
         setUserPosts(newPosts);
         setPage(page + 1);
@@ -105,9 +112,9 @@ export default function ProfilePage() {
 
   function hasDuplicate(arr, obj) {
     for (let i = 0; i < arr.length; i++) {
-        if (compareObjects(arr[i], obj)) {
-            return true;
-        }
+      if (compareObjects(arr[i], obj)) {
+        return true;
+      }
     }
     return false;
   }
@@ -116,19 +123,16 @@ export default function ProfilePage() {
     const uniqueObjects = [];
 
     for (let i = 0; i < arr.length; i++) {
-        if (!hasDuplicate(uniqueObjects, arr[i])) {
-            uniqueObjects.push(arr[i]);
-        }
+      if (!hasDuplicate(uniqueObjects, arr[i])) {
+        uniqueObjects.push(arr[i]);
+      }
     }
 
     return uniqueObjects;
   }
 
   useEffect(() => {
-    async function fetchData() {
-      await fetchUserProfile(userId);
-    }
-    fetchData();
+    fetchUserProfile(userId);
   }, [id, userId, page]);
 
   return (
@@ -150,22 +154,31 @@ export default function ProfilePage() {
                 className="unfollow"
                 onClick={handleUnfollowClick}
                 disabled={disable}
+                data-test="follow-btn"
               >
                 Unfollow
               </button>
             ) : (
-              <button onClick={handleFollowClick} disabled={disable}>
+              <button
+                onClick={handleFollowClick}
+                disabled={disable}
+                data-test="follow-btn"
+              >
                 {isFollowing ? "Following..." : "Follow"}
               </button>
             ))}
         </UserInfo>
       ) : null}
-      <Window>
+      <Window
+        onClick={() => {
+          setClosedSearch("none");
+        }}
+      >
         <InfiniteScroll
-         pageStart={0} 
-         loadMore={fetchUserProfile} 
-         hasMore={hasMore}
-         loader={loading ? <p>Loading ...</p> : null}
+          pageStart={0}
+          loadMore={fetchUserProfile}
+          hasMore={hasMore}
+          loader={loading ? <p>Loading ...</p> : null}
         >
           <ProfileContainer>
             {userProfile && userPosts.length === 0 ? (
