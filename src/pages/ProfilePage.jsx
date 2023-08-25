@@ -5,30 +5,28 @@ import styled from "styled-components";
 import Posts from "../components/Posts";
 import Trending from "../components/Trending";
 import SearchUser from "../components/Search";
-import { usePosts } from "../context/PostsContext";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { UserDataContext } from "../context/UserDataContext";
+import InfiniteScroll from "react-infinite-scroller";
 
 export default function ProfilePage() {
   const { setOpen, setRotate } = useContext(MenuContext);
   const { id } = useParams();
-  const { posts, fetchPosts } = usePosts();
   const [userProfile, setUserProfile] = useState(null);
   const [checkUser, setCheckUser] = useState(true);
   const { userId } = useContext(UserDataContext);
   const [isFollowing, setIsFollowing] = useState(false);
   const [disable, setDisable] = useState(false);
+  const [userPosts, setUserPosts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     setOpen("none");
     setRotate("rotate(0)");
-    fetchPosts();
   }, [setOpen, setRotate]);
-
-  const profileId = parseInt(id);
-
-  const userPosts = posts.filter((post) => post.userId === profileId);
 
   const handleFollowClick = async () => {
     setDisable(true);
@@ -68,28 +66,70 @@ export default function ProfilePage() {
     }
   };
 
+  const fetchUserProfile = async (userId) => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/user/${id}?userId=${userId}&page=${page}`
+      );
+      console.log(response.data);
+
+      if(response.data.response.length === 0) {
+        setHasMore(false);
+      } else {
+        const newPosts = filterDuplicates([...userPosts, ...response.data.response]);
+
+        setUserPosts(newPosts);
+        setPage(page + 1);
+        setHasMore(true);
+        setUserProfile(response.data.userData);
+        setIsFollowing(response.data.userData.isFollowing);
+        fetchCheckUser(response.data.userData.id);
+      }
+    } catch (error) {
+      console.log(error.response.data);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchCheckUser = (id) => {
+    if (id == userId) {
+      setCheckUser(false);
+    }
+  };
+
+  function compareObjects(obj1, obj2) {
+    return JSON.stringify(obj1) === JSON.stringify(obj2);
+  }
+
+  function hasDuplicate(arr, obj) {
+    for (let i = 0; i < arr.length; i++) {
+        if (compareObjects(arr[i], obj)) {
+            return true;
+        }
+    }
+    return false;
+  }
+
+  function filterDuplicates(arr) {
+    const uniqueObjects = [];
+
+    for (let i = 0; i < arr.length; i++) {
+        if (!hasDuplicate(uniqueObjects, arr[i])) {
+            uniqueObjects.push(arr[i]);
+        }
+    }
+
+    return uniqueObjects;
+  }
+
   useEffect(() => {
-    const fetchCheckUser = (id) => {
-      if (id == userId) {
-        setCheckUser(false);
-      }
-    };
-
-    const fetchUserProfile = async (userId) => {
-      try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}/user/${id}?userId=${userId}`
-        );
-        setUserProfile(response.data);
-        setIsFollowing(response.data.isFollowing);
-        fetchCheckUser(response.data.id);
-      } catch (error) {
-        console.log(error.response.data);
-      }
-    };
-
-    fetchUserProfile(userId);
-  }, [id, userId]);
+    async function fetchData() {
+      await fetchUserProfile(userId);
+    }
+    fetchData();
+  }, [id, userId, page]);
 
   return (
     <PageContainer>
@@ -121,14 +161,21 @@ export default function ProfilePage() {
         </UserInfo>
       ) : null}
       <Window>
-        <ProfileContainer>
-          {userProfile && userPosts.length === 0 ? (
-            <p className="noPosts">Sem posts até o momento</p>
-          ) : null}
-          {userProfile
-            ? userPosts.map((post) => <Posts key={post.id} post={post} />)
-            : null}
-        </ProfileContainer>
+        <InfiniteScroll
+         pageStart={0} 
+         loadMore={fetchUserProfile} 
+         hasMore={hasMore}
+         loader={loading ? <p>Loading ...</p> : null}
+        >
+          <ProfileContainer>
+            {userProfile && userPosts.length === 0 ? (
+              <p className="noPosts">Sem posts até o momento</p>
+            ) : null}
+            {userProfile
+              ? userPosts.map((post) => <Posts key={post.id} post={post} />)
+              : null}
+          </ProfileContainer>
+        </InfiniteScroll>
         <TrendingWrapper>
           <Trending />
         </TrendingWrapper>

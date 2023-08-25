@@ -8,6 +8,7 @@ import { UserDataContext } from "../context/UserDataContext";
 import { HashtagContext } from "../context/HashtagContext";
 import Posts from "../components/Posts";
 import Trending from "../components/Trending";
+import InfiniteScroll from 'react-infinite-scroller';
 
 export default function HashtagPage() {
   const { hashtag } = useParams();
@@ -15,20 +16,65 @@ export default function HashtagPage() {
   const { setOpen, setRotate } = useContext(MenuContext);
   const { tags } = useContext(HashtagContext);
   const [postsByTag, setPostsByTag] = useState([]);
+  const [ hasMore, setHasMore ] = useState(true);
+  const [ page, setPage ] = useState(1);
+  const [ loading, setLoading ] = useState(false);
 
   async function getPostByTag() {
-    const url = `${process.env.REACT_APP_API_URL}/hashtag/${hashtag}/${userId}`;
+    const url = `${process.env.REACT_APP_API_URL}/hashtag/${hashtag}/${userId}?page=${page}`;
+
+    setLoading(true);
     try {
-      const promise = await axios.get(url);
-      setPostsByTag(promise.data);
+      const response = await axios.get(url);
+      //console.log(response.data);
+
+      if(response.data.length === 0) {
+        setHasMore(false);
+      } else {
+        const newPosts = filterDuplicates([...postsByTag, ...response.data]);
+
+        setPostsByTag(newPosts);
+        setPage(page + 1);
+        setHasMore(true);
+      }
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
+  }
+  
+  function compareObjects(obj1, obj2) {
+    return JSON.stringify(obj1) === JSON.stringify(obj2);
+  }
+
+  function hasDuplicate(arr, obj) {
+    for (let i = 0; i < arr.length; i++) {
+        if (compareObjects(arr[i], obj)) {
+            return true;
+        }
+    }
+    return false;
+  }
+
+  function filterDuplicates(arr) {
+    const uniqueObjects = [];
+
+    for (let i = 0; i < arr.length; i++) {
+        if (!hasDuplicate(uniqueObjects, arr[i])) {
+            uniqueObjects.push(arr[i]);
+        }
+    }
+
+    return uniqueObjects;
   }
 
   useEffect(() => {
-    getPostByTag();
-  }, [tags]);
+    async function fetchData() {
+      await getPostByTag();
+    }
+    fetchData();
+  }, [tags, page]);
 
   return (
     <>
@@ -43,17 +89,24 @@ export default function HashtagPage() {
           <p># {hashtag}</p>
         </Title>
         <Content>
-          <PostColumn>
-            {postsByTag.length === 0 ? (
-              <p className="noPosts">Sem posts até o momento</p>
-            ) : (
-              postsByTag.map(
-                (postByTag) => (
-                  (<Posts key={postByTag.id} post={postByTag} />)
+          <InfiniteScroll
+            pageStart={0}
+            loadMore={getPostByTag}
+            hasMore={hasMore}
+            loader={loading ? <p>Loading ...</p> : null}
+          >
+            <PostColumn>
+              {postsByTag.length === 0 ? (
+                <p className="noPosts">Sem posts até o momento</p>
+              ) : (
+                postsByTag.map(
+                  (postByTag) => (
+                    (<Posts key={postByTag.id} post={postByTag} />)
+                  )
                 )
-              )
-            )}
-          </PostColumn>
+              )}
+            </PostColumn>
+          </InfiniteScroll>
           <TrendingWrapper>
             <Trending />
           </TrendingWrapper>
