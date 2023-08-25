@@ -15,13 +15,14 @@ function Posts({ post }) {
   const { userId, token } = useContext(UserDataContext);
   const { fetchPosts } = usePosts();
   const navigate = useNavigate();
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isModalOpenShared, setIsModalOpenShared] = useState(false);
   const [sharing, setSharing] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedDescription, setEditedDescription] = useState(post.description);
+  const [openComments, setOpenComments] = useState(false);
+  const [comment, setComment] = useState('');
 
   const textareaRef = useRef(null);
 
@@ -135,147 +136,214 @@ function Posts({ post }) {
         alert("Não foi possível salvar as alterações. Tente novamente mais tarde.");
       });
   };
+  console.log(post);
+  const addComment = (e) => {
+    e.preventDefault();
+
+    const url = `${process.env.REACT_APP_API_URL}/comments`;
+    const body = {
+      comment,
+      userId,
+      postId: post.id
+    };
+    axios
+      .post(url, body, {
+        headers: { authorization: `Bearer ${token}` },
+      })
+      .then(() => {
+        setComment("");
+        fetchPosts();
+      })
+      .catch((e) => {
+        alert("There was an error publishing your comment");
+      });
+
+  }
 
   useEffect(() => {
     fetchPosts();
   }, []);
 
   return (
-    <>
+    <ContainerPost>
       {post.repost[0].reposted === true ?
         <RepostConteiner>
           <ion-icon name="repeat-outline" />
           <h1>Re-posted by {post.repost[0].userId == userId ? <strong>you</strong> : <strong>{post.repost[0].userName}</strong>}</h1>
         </RepostConteiner>
         : <></>}
-      <BoxPublication data-test="post">
-        <Sider>
-          <img className="profleImg" src={post.ownerImage} />
-          {liked ? (
-            <FavoriteOutlinedIcon data-test="like-btn"
-              className="iconLiked"
-              onClick={handleUnikeClick}
-            />
-          ) : (
-            <FavoriteBorderOutlinedIcon data-test="like-btn"
-              className="iconNotLiked"
-              onClick={handleLikeClick}
-            />
-          )}
-          <p data-test="counter" className="likes">
-            {post.likes === 1 ? `${post.likes} like` : `${post.likes} likes`}
-          </p>
-          <ion-icon name="chatbubbles-outline" />
-          <p>3 comments</p>
-          <ion-icon data-test="repost-btn" onClick={() => setIsModalOpenShared(true)} name="repeat-outline" />
-          <p data-test="repost-counter">{post.repost[0].repostCount} re-post</p>
-        </Sider>
-        <Publi>
-          <Container>
-            <p data-test="username" className="username" onClick={() => navigate(`/user/${post.userId}`)}>{post.ownerUsername}</p>
-            {`${post.userId}` === userId && (
-              <DeleteAndUpdate>
-                <ModeEditIcon className="iconEdit" onClick={handleEditClick} data-test="edit-btn" />
-                <DeleteSharpIcon className="iconDelete" onClick={openModal} data-test="delete-btn" />
-              </DeleteAndUpdate>
+      
+        <BoxPublication data-test="post">
+          <Sider>
+            <img className="profleImg" src={post.ownerImage} />
+            {liked ? (
+              <FavoriteOutlinedIcon data-test="like-btn"
+                className="iconLiked"
+                onClick={handleUnikeClick}
+              />
+            ) : (
+              <FavoriteBorderOutlinedIcon data-test="like-btn"
+                className="iconNotLiked"
+                onClick={handleLikeClick}
+              />
             )}
-          </Container>
-          {isEditing ? (
-            <textarea
-              ref={textareaRef}
-              value={editedDescription}
-              onChange={(e) => setEditedDescription(e.target.value)}
-              onKeyDown={handleEditKeyDown}
-              rows="4"
-              autoFocus
-              data-test="edit-input"
-            />
-          ) : (
-            <p data-test="description" className="description">
-              {post.description}{" "}
-              {post.hashtags.map((hashtag, index) => (
-                <span onClick={() => navigate(`/hashtag/${hashtag}`)} key={index} className="highlight">
-                  #{hashtag}
-                </span>
-              ))}
+            <p data-test="counter" className="likes">
+              {post.likes === 1 ? `${post.likes} like` : `${post.likes} likes`}
             </p>
-          )}
+            <ion-icon name="chatbubbles-outline" onClick={() => setOpenComments(true)} data-test="comment-btn"/>
+            <p data-test="comment-counter">{post.comments.length === 1 ? `${post.comments.length} comment` : `${post.comments.length} comments`}</p>
+            <ion-icon data-test="repost-btn" onClick={() => setIsModalOpenShared(true)} name="repeat-outline" />
+            <p data-test="repost-counter">{post.repost[0].repostCount} re-post</p>
+          </Sider>
+          <Publi>
+            <Container>
+              <p data-test="username" className="username" onClick={() => navigate(`/user/${post.userId}`)}>{post.ownerUsername}</p>
+              {`${post.userId}` === userId && (
+                <DeleteAndUpdate>
+                  <ModeEditIcon className="iconEdit" onClick={handleEditClick} data-test="edit-btn" />
+                  <DeleteSharpIcon className="iconDelete" onClick={openModal} data-test="delete-btn" />
+                </DeleteAndUpdate>
+              )}
+            </Container>
+            {isEditing ? (
+              <textarea
+                ref={textareaRef}
+                value={editedDescription}
+                onChange={(e) => setEditedDescription(e.target.value)}
+                onKeyDown={handleEditKeyDown}
+                rows="4"
+                autoFocus
+                data-test="edit-input"
+              />
+            ) : (
+              <p data-test="description" className="description">
+                {post.description}{" "}
+                {post.hashtags && post.hashtags.map((hashtag, index) => (
+                  <span onClick={() => navigate(`/hashtag/${hashtag}`)} key={index} className="highlight">
+                    #{hashtag}
+                  </span>
+                ))}
+              </p>
+            )}
 
-          <div className="link" data-test="link">
-            <a href={post.link} target="_blank" rel="noopener noreferrer">
-              {post.urlData.title ? (
-                <>
-                  <div className="linkText">
-                    <h2> {post.urlData.title}</h2>
-                    <h3>{post.urlData.description}</h3>
-                    <h4>{post.urlData.url}</h4>
-                  </div>
-                  <div className="linkImage">
-                    <img src={post.urlData.images[0]} alt="linkImage" />
-                  </div>
-                </>) :
-                <>
-                  <div className="linkText">
-                    <h1>{post.urlData.url}</h1>
-                  </div>
-                </>}
-            </a>
-          </div>
-        </Publi>
-        <Modal
-          isOpen={isModalOpen}
-          onRequestClose={closeModal}
-          contentLabel="Delete Post Modal"
-          style={customStyles}
-        >
-          <ModalContent>
-            <p>Are you sure you want to delete this post?</p>
-            <button onClick={closeModal} disabled={isDeleting} data-test="cancel">
-              No, go back
-            </button>
-            <button onClick={handleDeletePost} disabled={isDeleting} data-test="confirm" >
-              {isDeleting ? "Deleting..." : "Yes, delete it"}
-            </button>
-          </ModalContent>
-        </Modal>
-        <Modal
-          isOpen={isModalOpenShared}
-          onRequestClose={() => { setIsModalOpenShared(false) }}
-          contentLabel="Shared Post Modal"
-          style={customStyles}
-        >
-          <ModalContent>
-            <p>Do you want to re-post this link?</p>
-            <button onClick={() => { setIsModalOpenShared(false) }} disabled={sharing} data-test="cancel">
-              No, cancel
-            </button>
-            <button onClick={() => {
-              setSharing(true)
+            <div className="link" data-test="link">
+              <a href={post.link} target="_blank" rel="noopener noreferrer">
+                {post.urlData.title ? (
+                  <>
+                    <div className="linkText">
+                      <h2> {post.urlData.title}</h2>
+                      <h3>{post.urlData.description}</h3>
+                      <h4>{post.urlData.url}</h4>
+                    </div>
+                    <div className="linkImage">
+                      <img src={post.urlData.images[0]} alt="linkImage" />
+                    </div>
+                  </>) :
+                  <>
+                    <div className="linkText">
+                      <h1>{post.urlData.url}</h1>
+                    </div>
+                  </>}
+              </a>
+            </div>
+          </Publi>
+          <Modal
+            isOpen={isModalOpen}
+            onRequestClose={closeModal}
+            contentLabel="Delete Post Modal"
+            style={customStyles}
+          >
+            <ModalContent>
+              <p>Are you sure you want to delete this post?</p>
+              <button onClick={closeModal} disabled={isDeleting} data-test="cancel">
+                No, go back
+              </button>
+              <button onClick={handleDeletePost} disabled={isDeleting} data-test="confirm" >
+                {isDeleting ? "Deleting..." : "Yes, delete it"}
+              </button>
+            </ModalContent>
+          </Modal>
+          <Modal
+            isOpen={isModalOpenShared}
+            onRequestClose={() => { setIsModalOpenShared(false) }}
+            contentLabel="Shared Post Modal"
+            style={customStyles}
+          >
+            <ModalContent>
+              <p>Do you want to re-post this link?</p>
+              <button onClick={() => { setIsModalOpenShared(false) }} disabled={sharing} data-test="cancel">
+                No, cancel
+              </button>
+              <button onClick={() => {
+                setSharing(true)
 
-              axios.put(`${process.env.REACT_APP_API_URL}/repost/${post.id}/${userId}`)
-                .then(() => {
-                  setIsModalOpenShared(false)
-                  fetchPosts();
-                  setSharing(false);
-                })
-                .catch((error) => {
-                  console.error("Erro ao deletar o post:", error);
-                  setIsModalOpenShared(false);
-                  setSharing(false);
-                  alert("Não foi possivel re-postar. Tente novamente mais tarde.")
-                })
-            }} disabled={sharing} data-test="confirm" >
-              {isDeleting ? "Deleting..." : "Yes, share!"}
-            </button>
-          </ModalContent>
-        </Modal>
-      </BoxPublication >
-    </>
+                axios.put(`${process.env.REACT_APP_API_URL}/repost/${post.id}/${userId}`)
+                  .then(() => {
+                    setIsModalOpenShared(false)
+                    fetchPosts();
+                    setSharing(false);
+                  })
+                  .catch((error) => {
+                    console.error("Erro ao deletar o post:", error);
+                    setIsModalOpenShared(false);
+                    setSharing(false);
+                    alert("Não foi possivel re-postar. Tente novamente mais tarde.")
+                  })
+              }} disabled={sharing} data-test="confirm" >
+                {isDeleting ? "Deleting..." : "Yes, share!"}
+              </button>
+            </ModalContent>
+          </Modal>
+        </BoxPublication >
+        {openComments && (
+          <BoxComments data-test="comment-box">
+            {post.comments && post.comments.map((comment, index) => (
+              <div className="comment" key={index} data-test="comment" >
+                <img src={comment.image} />
+                <div>
+                  <div className="box-user"> 
+                  <p className="user">{comment.username} </p>
+                  {comment.relationship === null && (
+                    <></>
+                  )}
+                  {comment.relationship !== null && (
+                    <p className="following"> • {comment.relationship}</p>
+                  )}
+                  </div>
+                  <p className="comment-text">{comment.comment}</p>
+                </div>
+              </div>
+            ))}
+            <div className="add-comment">
+              <img src={post.ownerImage} />
+              <form onSubmit={addComment}>
+                <input placeholder="write a comment..." type="text"
+                  required value={comment} onChange={(e) => setComment(e.target.value)} data-test="comment-input"/>
+                <button type="submit" data-test="comment-submit">
+                  <ion-icon name="paper-plane-outline"></ion-icon>
+                </button>
+              </form>
+            </div>
+          </BoxComments>
+        )}
+
+      </ContainerPost>
+    
   );
 }
 
 export default Posts;
 
+const ContainerPost = styled.div`
+      width: 100%;
+      max-width: 611px;  
+      background-color: #1E1E1E;
+      margin-top:20px;
+      @media (min-width: 611px) {
+        border-radius: 16px;
+  }
+      
+`
 const BoxPublication = styled.div`
       width: 100%;
       max-width: 611px;
@@ -283,7 +351,6 @@ const BoxPublication = styled.div`
       display: flex;
       flex-direction: row;
       padding: 10px 0 15px 0;
-      margin-bottom:20px;
 
       line-height: normal;
 
@@ -555,11 +622,11 @@ const ModalContent = styled.div`
       `;
 const RepostConteiner = styled.div`
       height:33px;
-      width: 611px;
+      width: 100%;
+      max-width: 611px;
 
       border-top-left-radius: 16px;
       border-top-right-radius: 16px;
-      margin-bottom:-27px;
       background: #1E1E1E;
 
       display:flex;
@@ -588,4 +655,96 @@ const RepostConteiner = styled.div`
         font-size:20px;
         margin-right:6px;
   }
+  @media (min-width: 611px) {
+        border-radius: 16px;
+  }
       `;
+const BoxComments = styled.div`
+  width: 100%;
+  max-width: 611px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  img{
+    width: 39px;
+    height: 39px;
+    border-radius: 50%;
+  }
+  input {
+    width: calc(100vw - 101px);
+    height: 39px;
+    border-radius: 8px;
+    border: none;
+    background-color: #252525;
+    padding-left: 15px;
+    color: #ACACAC;
+  }
+  input::placeholder {
+    font-size: 14px;
+    font-weight: 400;
+    font-style: italic;
+    color: #575757;
+  }
+  input:focus {
+    outline: none;
+  }
+  button {
+    right: 35px;
+    bottom: 23px;
+    position: absolute;
+    border: none;
+    background-color: #252525;
+    cursor: pointer;
+    ion-icon {
+      color: #c6c6c6;
+      font-size: 16px;
+    }
+  }
+  .comment {
+    padding: 25px;
+    display: flex;
+    img {
+      margin-right: 10px;
+    }
+  }
+  .box-user{
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 4px;
+  }
+  .user {
+    font-size: 14px;
+    font-weight: 700;
+    font-family: "Lato", sans-serif;
+    color: #F3F3F3;
+    margin-right: 10px;
+  }
+  .following {
+    font-size: 14px;
+    font-weight: 400;
+    font-family: "Lato", sans-serif;
+    color: #565656;
+  }
+  .comment-text {
+    font-size: 14px;
+    font-weight: 400;
+    font-family: "Lato", sans-serif;
+    color: #ACACAC;
+  }
+  .add-comment {
+    height: 69px;
+    padding: 0 25px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    img {
+      margin-right: 10px;
+    }
+  }
+  @media (min-width: 611px) {
+        border-radius: 16px;
+        input {
+          width: 510px;
+        }
+  }
+`
