@@ -7,9 +7,10 @@ import { UserDataContext } from "../context/UserDataContext";
 import { usePosts } from "../context/PostsContext";
 import Posts from "../components/Posts";
 import Trending from "../components/Trending";
+import InfiniteScroll from "react-infinite-scroller";
 
 export default function TimeLinePage() {
-  const { posts, fetchPosts } = usePosts();
+  const { posts, loading, fetchPosts, hasMore } = usePosts();
   const { setOpen, setRotate, setClosedSearch, closedComments, setClosedComments } = useContext(MenuContext);
   const { token, userId, userImage } = useContext(UserDataContext);
   const [link, setLink] = useState("");
@@ -74,6 +75,8 @@ export default function TimeLinePage() {
   const filteredPosts = posts.filter((post) =>
     followingUserIds.includes(post.userId)
   );
+  //console.log("followingUserIds", followingUserIds.length)
+  //console.log("posts", posts.length)
 
   return (
     <PageContainer>
@@ -128,29 +131,29 @@ export default function TimeLinePage() {
                 </form>
               </BoxPost>
             </PostContainer>
-
-            <PostList>
-              {/* {!filtering ? (
-                <p className="noPosts">Carregando...</p>
-              ) : filtering && filteredPosts.length === 0 ? (
-                followingUserIds.length === 0 ? (
-                  <p className="noPosts">
-                    Você ainda não segue ninguém. Procure por novos amigos!
+            <InfiniteScroll
+              pageStart={0}
+              loadMore={fetchPosts}
+              hasMore={hasMore}
+              loader={loading ? <p>Loading ...</p> : null}
+            >
+              <PostList>
+                {posts.length === 0 && followingUserIds.length > 0 ? (
+                  <p className="noPosts" data-test="message">
+                    No posts found from your friends
                   </p>
                 ) : (
-                  <p className="noPosts">Sem post dos seus amigos</p>
-                )
-              ) : (
-                filteredPosts.map((post) => <Posts key={post.id} post={post} />)
-              )} */}
-              {posts.length === 0 ? (
-                <p className="noPosts" data-test="message">
-                  There are no posts yet
-                </p>
-              ) : (
-                posts.map((post) => <Posts key={post.id} post={post} />)
-              )}
-            </PostList>
+                  posts.map((post) => <Posts key={post.id} post={post} />)
+                )}
+                {posts.length === 0 && followingUserIds.length === 0 ? (
+                  <p className="noPosts" data-test="message">
+                    You don't follow anyone yet. Search for new friends!
+                  </p>
+                ) : (
+                  <></>
+                )}
+              </PostList>
+            </InfiniteScroll>
           </Content>
           <TrendingWrapper>
             <Trending />

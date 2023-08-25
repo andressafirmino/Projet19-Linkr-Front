@@ -2,8 +2,8 @@ import React, { useState, useContext, useEffect, useRef } from "react";
 import styled from "styled-components";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
-import DeleteSharpIcon from '@mui/icons-material/DeleteSharp';
-import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import DeleteSharpIcon from "@mui/icons-material/DeleteSharp";
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { UserDataContext } from "../context/UserDataContext";
 import axios from "axios";
 import { usePosts } from "../context/PostsContext";
@@ -31,12 +31,20 @@ function Posts({ post }) {
 
   const customStyles = {
     content: {
-      top: '50%',
-      left: '50%',
-      right: 'auto',
-      bottom: 'auto',
-      marginRight: '-50%',
-      transform: 'translate(-50%, -50%)',
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+      padding: 0,
+      borderRadius: "20px",
+      backgroundColor: "#333333",
+      width: "100%",
+      maxWidth: "600px",
+      height: "210px",
+      display: "flex",
+      justifyContent: "center",
     },
   };
 
@@ -136,7 +144,9 @@ function Posts({ post }) {
       })
       .catch((error) => {
         console.error("Erro ao salvar a edição:", error);
-        alert("Não foi possível salvar as alterações. Tente novamente mais tarde.");
+        alert(
+          "Não foi possível salvar as alterações. Tente novamente mais tarde."
+        );
       });
   };
   const addComment = (e) => {
@@ -168,11 +178,19 @@ function Posts({ post }) {
   }, []);
 
   return (
+
     <ContainerPost>
       {post.repost[0].reposted === true ?
         <RepostConteiner>
           <ion-icon name="repeat-outline" />
-          <h1>Re-posted by {post.repost[0].userId == userId ? <strong>you</strong> : <strong>{post.repost[0].userName}</strong>}</h1>
+          <h1>
+            Re-posted by{" "}
+            {post.repost[0].userId == userId ? (
+              <strong>you</strong>
+            ) : (
+              <strong>{post.repost[0].userName}</strong>
+            )}
+          </h1>
         </RepostConteiner>
         : <></>}
       
@@ -330,7 +348,7 @@ function Posts({ post }) {
             </div>
           </BoxComments>
         )}
-      </ContainerPost>    
+      </ContainerPost>
   );
 }
 
@@ -360,138 +378,148 @@ const BoxPublication = styled.div`
         border-radius: 16px;
   }
 
-      @media (min-width: 640px) {
-        padding: 20px 0 20px 0;
+  @media (min-width: 640px) {
+    padding: 20px 0 20px 0;
   }
-      ion-icon{
-        flex-shrink: 0;
-      color:#FFFFFF;
-      font-size: 25px;
-      margin-top:15px;
-      margin-bottom:2px;
+  ion-icon {
+    flex-shrink: 0;
+    color: #ffffff;
+    font-size: 25px;
+    margin-top: 15px;
+    margin-bottom: 2px;
   }
-      `;
+`;
 const Sider = styled.div`
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      img {
-        width: 40px;
-      height: 40px;
-      background-color: #ffffff;
-      border-radius: 50%;
-      margin: 0 15px 17px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  img {
+    width: 40px;
+    height: 40px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    margin: 0 15px 17px;
   }
-      .likes {
-        color: #fff;
-      text-align: center;
-      font-family: Lato;
-      font-size: 9px;
-      font-weight: 400;
+  .likes {
+    color: #fff;
+    text-align: center;
+    font-family: Lato;
+    font-size: 9px;
+    font-weight: 400;
 
-      margin-top: 12px;
+    margin-top: 12px;
   }
-      .iconNotLiked {
-        color: #ffffff;
+  .iconNotLiked {
+    color: #ffffff;
   }
-      .iconLiked {
-        color: #ff0000;
+  .iconLiked {
+    color: #ff0000;
   }
-      p{
-        color: #fff;
-      text-align: center;
-      font-family: Lato;
-      font-size: 11px;
-      font-weight: 400;
+  p {
+    color: #fff;
+    text-align: center;
+    font-family: Lato;
+    font-size: 11px;
+    font-weight: 400;
   }
-      @media (min-width: 640px) {
-        img {
-        width: 50px;
+  @media (min-width: 640px) {
+    img {
+      width: 50px;
       height: 50px;
     }
-      .likes {
-        font-size: 11px;
+    .likes {
+      font-size: 11px;
     }
   }
-      `;
+`;
 const Publi = styled.div`
-      min-width: 288px;
-      max-width: calc(100% - 60px);
+  min-width: 288px;
+  max-width: calc(100% - 60px);
 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 7px;
+  font-size: 15px;
+  margin-right: 18px;
+  .username {
+    color: #fff;
+    font-family: Lato;
+    font-size: 17px;
+    font-weight: 400;
+  }
+  .description {
+    color: #b7b7b7;
+    font-family: Lato;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 400;
+  }
+
+  .highlight {
+    color: #fff;
+    font-family: Lato;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-left: 5px;
+  }
+  .link {
+    /* width: 100%;
+        height: 115px; */
+
+    display: flex;
+    /* flex-direction: row; */
+
+    border: 1px solid #4d4d4d;
+    border-radius: 11px;
+    margin-top: 7px;
+    padding: 11px;
+
+    overflow: hidden;
+
+    width: 503px;
+    height: 155px;
+    flex-shrink: 0;
+
+    a {
+      width: 100%;
+      height: 100%;
+      color: #cecece;
+      font-family: Lato;
+      font-size: 9px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+      display: flex;
+      justify-content: space-around;
+      position: relative;
+    }
+
+    .linkText {
+      position: absolute;
+      top: -12px;
+      left: 0px;
+      width: 60%;
+      height: 100%;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      gap: 7px;
-      font-size: 15px;
-      margin-right: 18px;
-      .username {
-        color: #fff;
-      font-family: Lato;
-      font-size: 17px;
-      font-weight: 400;
-  }
-      .description {
-        color: #b7b7b7;
-      font-family: Lato;
-      font-size: 15px;
-      font-style: normal;
-      font-weight: 400;
-  }
-
-      .highlight {
-        color: #fff;
-        font-family: Lato;
-        font-size: 15px;
-        font-style: normal;
-        font-weight: 700;
-        line-height: normal;
-        margin-left: 5px;
-      }
-      .link {
-        /* width: 100%;
-        height: 115px; */
-
-        display: flex;
-      /* flex-direction: row; */
-
-      border: 1px solid #4d4d4d;
-      border-radius: 11px;
-      margin-top: 7px;
-      padding: 11px;
-
-      overflow: hidden;
-
-      width: 503px;
-      height: 155px;
-      flex-shrink: 0;
-
-      a {
-        width:100%;
-        height:100%;
+      h1 {
+        margin-top: 24px;
+        margin-left: 95px;
         color: #cecece;
         font-family: Lato;
-        font-size: 9px;
+        font-size: 16px;
         font-style: normal;
         font-weight: 400;
         line-height: normal;
-        display:flex;
-        justify-content:space-around;
-        position:relative;
-    }
-
-      .linkText {
-        position:absolute;
-        top:-12px;
-        left:0px;
-        width: 60%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      h1{
-        margin-top:24px;
-        margin-left:95px;
-        color: #CECECE;
+        width: 250px;
+      }
+      h2 {
+        margin-top: 24px;
+        color: #cecece;
         font-family: Lato;
         font-size: 16px;
         font-style: normal;
@@ -499,31 +527,21 @@ const Publi = styled.div`
         line-height: normal;
         width: 250px;
       }
-      h2{
-        margin-top:24px;
-        color: #CECECE;
-        font-family: Lato;
-        font-size: 16px;
-        font-style: normal;
-        font-weight: 400;
-        line-height: normal;
-        width: 250px;
-      }
-      h3{
-        box-sizing:border-box;
-        margin-top:5px;
-        color: #9B9595;
+      h3 {
+        box-sizing: border-box;
+        margin-top: 5px;
+        color: #9b9595;
         font-family: Lato;
         font-size: 11px;
         font-style: normal;
         font-weight: 400;
         line-height: normal;
         width: 302.816px;
-        max-height:38px;
+        max-height: 38px;
       }
-      h4{
-        margin-top:13px;
-        color: #CECECE;
+      h4 {
+        margin-top: 13px;
+        color: #cecece;
         font-family: Lato;
         font-size: 11px;
         font-style: normal;
@@ -533,14 +551,14 @@ const Publi = styled.div`
       }
     }
 
-      .linkImage {
-        position:absolute;
-        top:-12px;
-        left:337px;
-        width: 154px;
-        height: 155px;
-        flex-shrink: 0;
-      img{
+    .linkImage {
+      position: absolute;
+      top: -12px;
+      left: 337px;
+      width: 154px;
+      height: 155px;
+      flex-shrink: 0;
+      img {
         width: 153.44px;
         height: 155px;
         flex-shrink: 0;
@@ -552,76 +570,75 @@ const Publi = styled.div`
       flex-direction: column; */
     }
   }
-      @media (min-width: 640px) {
-        font-size: 17px;
-      .username {
-        font-size: 19px;
+  @media (min-width: 640px) {
+    font-size: 17px;
+    .username {
+      font-size: 19px;
     }
-      .link {
-        width: auto;
+    .link {
+      width: auto;
       width: 503px;
       font-size: 11px;
     }
   }
-      `;
+`;
 const Container = styled.div`
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      .username {
-        color: #fff;
-      font-family: Lato;
-      font-size: 17px;
-      font-weight: 400;
-
-}
-      `
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .username {
+    color: #fff;
+    font-family: Lato;
+    font-size: 17px;
+    font-weight: 400;
+  }
+`;
 const DeleteAndUpdate = styled.div`
-      .iconEdit {
-        color: #ffffff;
+  .iconEdit {
+    color: #ffffff;
   }
-      .iconDelete {
-        color: #ffffff;
+  .iconDelete {
+    color: #ffffff;
   }
-      `
+`;
 const ModalContent = styled.div`
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      background-color: #333333;
-      border-radius: 8px;
-      max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: #333333;
+  border-radius: 8px;
+  max-width: 300px;
 
-      p {
-        font-size: 18px;
-      margin-bottom: 20px;
+  p {
+    font-size: 18px;
+    margin-bottom: 20px;
   }
 
-      button {
-        margin-top: 10px;
-      padding: 8px 16px;
-      border: none;
-      background-color: #ffffff;
-      color: #1877F2;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      border-radius: 5px;
+  button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    border: none;
+    background-color: #ffffff;
+    color: #1877f2;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 5px;
   }
 
-      button:hover{
-        color: #ffffff;
-      background-color: #1877F2;
+  button:hover {
+    color: #ffffff;
+    background-color: #1877f2;
   }
 
-      button:first-child {
-        background-color: #e0e0e0;
-      color: #333;
-      margin-right: 10px;
+  button:first-child {
+    background-color: #e0e0e0;
+    color: #333;
+    margin-right: 10px;
   }
-      `;
+`;
 const RepostConteiner = styled.div`
       height:33px;
       width: 100%;
@@ -635,32 +652,53 @@ const RepostConteiner = styled.div`
       padding-left:13px;
       padding-top:4px;
       box-sizing:border-box;
+`;
 
-      h1{
-        color: #FFF;
-        font-family: Lato;
-        font-size: 11px;
-        font-style: normal;
-        font-weight: 400;
-        line-height: normal;
-        strong{
-          color: #FFF;
-        font-family: Lato;
-        font-size: 12px;
-        font-style: normal;
-        font-weight: bold;
-        line-height: normal;
+
+const ButtonsContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+`;
+const RepostConteiner = styled.div`
+  height: 33px;
+  width: 611px;
+
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  margin-bottom: -27px;
+  background: #1e1e1e;
+
+  display: flex;
+  padding-left: 13px;
+  padding-top: 4px;
+  box-sizing: border-box;
+
+  h1 {
+    color: #fff;
+    font-family: Lato;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    strong {
+      color: #fff;
+      font-family: Lato;
+      font-size: 12px;
+      font-style: normal;
+      font-weight: bold;
+      line-height: normal;
     }
   }
 
-      ion-icon{
-        font-size:20px;
-        margin-right:6px;
+  ion-icon {
+    font-size: 20px;
+    margin-right: 6px;
   }
   @media (min-width: 611px) {
         border-radius: 16px;
   }
-      `;
+`;
 const BoxComments = styled.div`
   width: 100%;
   max-width: 611px;
@@ -749,4 +787,5 @@ const BoxComments = styled.div`
           width: 510px;
         }
   }
-`
+`;
+
