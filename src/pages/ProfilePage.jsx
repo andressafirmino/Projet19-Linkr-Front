@@ -110,11 +110,16 @@ export default function ProfilePage() {
                 className="unfollow"
                 onClick={handleUnfollowClick}
                 disabled={disable}
+                data-test="follow-btn"
               >
                 Unfollow
               </button>
             ) : (
-              <button onClick={handleFollowClick} disabled={disable}>
+              <button
+                onClick={handleFollowClick}
+                disabled={disable}
+                data-test="follow-btn"
+              >
                 {isFollowing ? "Following..." : "Follow"}
               </button>
             ))}
