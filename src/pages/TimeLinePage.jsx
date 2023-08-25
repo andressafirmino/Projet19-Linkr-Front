@@ -8,6 +8,8 @@ import { usePosts } from "../context/PostsContext";
 import Posts from "../components/Posts";
 import Trending from "../components/Trending";
 import InfiniteScroll from "react-infinite-scroller";
+import { HashtagContext } from "../context/HashtagContext";
+
 
 export default function TimeLinePage() {
   const { posts, loading, fetchPosts, hasMore } = usePosts();
@@ -18,6 +20,7 @@ export default function TimeLinePage() {
   const [disabled, setDisabled] = useState(false);
   const [followingUserIds, setFollowingUserIds] = useState([]);
   const [filtering, setFiltering] = useState(false);
+  const { tags, postsByTag, getPostByTag, att, setAtt } = useContext(HashtagContext);
   const [localClosedComments, setLocalClosedComments] = useState(closedComments);
 
   function publicPost(e) {
@@ -63,14 +66,11 @@ export default function TimeLinePage() {
   }
 
   useEffect(() => {
-    async function fetchData() {
-      await fetchPosts();
-      await fetchFollowPosts(userId);
-      setFiltering(true);
-    }
 
-    fetchData();
-  }, [userId]);
+    fetchPosts();
+    fetchFollowPosts(userId);
+    setAtt(false)
+  }, [userId, att]);
 
   const filteredPosts = posts.filter((post) =>
     followingUserIds.includes(post.userId)

@@ -25,7 +25,7 @@ function Posts({ post }) {
   const [editedDescription, setEditedDescription] = useState(post.description);
   const [openComments, setOpenComments] = useState(false);
   const [comment, setComment] = useState('');
-  const {setAtt} = useContext(HashtagContext);
+  const { setAtt } = useContext(HashtagContext);
 
   const textareaRef = useRef(null);
 
@@ -193,137 +193,138 @@ function Posts({ post }) {
           </h1>
         </RepostConteiner>
         : <></>}
-      
-        <BoxPublication data-test="post">
-          <Sider>
-            <img className="profleImg" src={post.ownerImage} />
-            {liked ? (
-              <FavoriteOutlinedIcon data-test="like-btn"
-                className="iconLiked"
-                onClick={handleUnikeClick}
-              />
-            ) : (
-              <FavoriteBorderOutlinedIcon data-test="like-btn"
-                className="iconNotLiked"
-                onClick={handleLikeClick}
-              />
+
+      <BoxPublication data-test="post">
+        <Sider>
+          <img className="profleImg" src={post.ownerImage} />
+          {liked ? (
+            <FavoriteOutlinedIcon data-test="like-btn"
+              className="iconLiked"
+              onClick={handleUnikeClick}
+            />
+          ) : (
+            <FavoriteBorderOutlinedIcon data-test="like-btn"
+              className="iconNotLiked"
+              onClick={handleLikeClick}
+            />
+          )}
+          <p data-test="counter" className="likes">
+            {post.likes === 1 ? `${post.likes} like` : `${post.likes} likes`}
+          </p>
+          <ion-icon name="chatbubbles-outline" onClick={() => {
+            setOpenComments(openComments ? false : true);
+          }} data-test="comment-btn" />
+          <p data-test="comment-counter">{post.comments.length === 1 ? `${post.comments.length} comment` : `${post.comments.length} comments`}</p>
+          <ion-icon data-test="repost-btn" onClick={() => setIsModalOpenShared(true)} name="repeat-outline" />
+          <p data-test="repost-counter">{post.repost[0].repostCount} re-post</p>
+        </Sider>
+        <Publi>
+          <Container>
+            <p data-test="username" className="username" onClick={() => navigate(`/user/${post.userId}`)}>{post.ownerUsername}</p>
+            {`${post.userId}` === userId && (
+              <DeleteAndUpdate>
+                <ModeEditIcon className="iconEdit" onClick={handleEditClick} data-test="edit-btn" />
+                <DeleteSharpIcon className="iconDelete" onClick={openModal} data-test="delete-btn" />
+              </DeleteAndUpdate>
             )}
-            <p data-test="counter" className="likes">
-              {post.likes === 1 ? `${post.likes} like` : `${post.likes} likes`}
+          </Container>
+          {isEditing ? (
+            <textarea
+              ref={textareaRef}
+              value={editedDescription}
+              onChange={(e) => setEditedDescription(e.target.value)}
+              onKeyDown={handleEditKeyDown}
+              rows="4"
+              autoFocus
+              data-test="edit-input"
+            />
+          ) : (
+            <p data-test="description" className="description">
+              {post.description}{" "}
+              {post.hashtags && post.hashtags.map((hashtag, index) => (
+                <span onClick={() => navigate(`/hashtag/${hashtag}`)} key={index} className="highlight">
+                  #{hashtag}
+                </span>
+              ))}
             </p>
-            <ion-icon name="chatbubbles-outline" onClick={() => {setOpenComments(openComments ? false : true);        
-        }} data-test="comment-btn"/>
-            <p data-test="comment-counter">{post.comments.length === 1 ? `${post.comments.length} comment` : `${post.comments.length} comments`}</p>
-            <ion-icon data-test="repost-btn" onClick={() => setIsModalOpenShared(true)} name="repeat-outline" />
-            <p data-test="repost-counter">{post.repost[0].repostCount} re-post</p>
-          </Sider>
-          <Publi>
-            <Container>
-              <p data-test="username" className="username" onClick={() => navigate(`/user/${post.userId}`)}>{post.ownerUsername}</p>
-              {`${post.userId}` === userId && (
-                <DeleteAndUpdate>
-                  <ModeEditIcon className="iconEdit" onClick={handleEditClick} data-test="edit-btn" />
-                  <DeleteSharpIcon className="iconDelete" onClick={openModal} data-test="delete-btn" />
-                </DeleteAndUpdate>
-              )}
-            </Container>
-            {isEditing ? (
-              <textarea
-                ref={textareaRef}
-                value={editedDescription}
-                onChange={(e) => setEditedDescription(e.target.value)}
-                onKeyDown={handleEditKeyDown}
-                rows="4"
-                autoFocus
-                data-test="edit-input"
-              />
-            ) : (
-              <p data-test="description" className="description">
-                {post.description}{" "}
-                {post.hashtags && post.hashtags.map((hashtag, index) => (
-                  <span onClick={() => navigate(`/hashtag/${hashtag}`)} key={index} className="highlight">
-                    #{hashtag}
-                  </span>
-                ))}
-              </p>
-            )}
+          )}
 
-            <div className="link" data-test="link">
-              <a href={post.link} target="_blank" rel="noopener noreferrer">
-                {post.urlData.title !== null && post.urlData.title ? (
-                  <>
-                    <div className="linkText">
-                      <h2> {post.urlData.title}</h2>
-                      <h3>{post.urlData.description}</h3>
-                      <h4>{post.urlData.url}</h4>
-                    </div>
-                    <div className="linkImage">
-                      <img src={post.urlData.images[0]} alt="linkImage" />
-                    </div>
-                  </>) :
-                  <>
-                    <div className="linkText">
-                      <h1>{post.urlData.url}</h1>
-                    </div>
-                  </>}
-              </a>
-            </div>
-          </Publi>
-          <Modal
-            isOpen={isModalOpen}
-            onRequestClose={closeModal}
-            contentLabel="Delete Post Modal"
-            style={customStyles}
-          >
-            <ModalContent>
-              <p>Are you sure you want to delete this post?</p>
-              <button onClick={closeModal} disabled={isDeleting} data-test="cancel">
-                No, go back
-              </button>
-              <button onClick={handleDeletePost} disabled={isDeleting} data-test="confirm" >
-                {isDeleting ? "Deleting..." : "Yes, delete it"}
-              </button>
-            </ModalContent>
-          </Modal>
-          <Modal
-            isOpen={isModalOpenShared}
-            onRequestClose={() => { setIsModalOpenShared(false) }}
-            contentLabel="Shared Post Modal"
-            style={customStyles}
-          >
-            <ModalContent>
-              <p>Do you want to re-post this link?</p>
-              <button onClick={() => { setIsModalOpenShared(false) }} disabled={sharing} data-test="cancel">
-                No, cancel
-              </button>
-              <button onClick={() => {
-                setSharing(true)
+          <div className="link" data-test="link">
+            <a href={post.link} target="_blank" rel="noopener noreferrer">
+              {post.urlData.title !== null && post.urlData.title ? (
+                <>
+                  <div className="linkText">
+                    <h2> {post.urlData.title}</h2>
+                    <h3>{post.urlData.description}</h3>
+                    <h4>{post.urlData.url}</h4>
+                  </div>
+                  <div className="linkImage">
+                    <img src={post.urlData.images[0]} alt="linkImage" />
+                  </div>
+                </>) :
+                <>
+                  <div className="linkText">
+                    <h1>{post.urlData.url}</h1>
+                  </div>
+                </>}
+            </a>
+          </div>
+        </Publi>
+        <Modal
+          isOpen={isModalOpen}
+          onRequestClose={closeModal}
+          contentLabel="Delete Post Modal"
+          style={customStyles}
+        >
+          <ModalContent>
+            <p>Are you sure you want to delete this post?</p>
+            <button onClick={closeModal} disabled={isDeleting} data-test="cancel">
+              No, go back
+            </button>
+            <button onClick={handleDeletePost} disabled={isDeleting} data-test="confirm" >
+              {isDeleting ? "Deleting..." : "Yes, delete it"}
+            </button>
+          </ModalContent>
+        </Modal>
+        <Modal
+          isOpen={isModalOpenShared}
+          onRequestClose={() => { setIsModalOpenShared(false) }}
+          contentLabel="Shared Post Modal"
+          style={customStyles}
+        >
+          <ModalContent>
+            <p>Do you want to re-post this link?</p>
+            <button onClick={() => { setIsModalOpenShared(false) }} disabled={sharing} data-test="cancel">
+              No, cancel
+            </button>
+            <button onClick={() => {
+              setSharing(true)
 
-                axios.put(`${process.env.REACT_APP_API_URL}/repost/${post.id}/${userId}`)
-                  .then(() => {
-                    setIsModalOpenShared(false)
-                    fetchPosts();
-                    setSharing(false);
-                  })
-                  .catch((error) => {
-                    console.error("Erro ao deletar o post:", error);
-                    setIsModalOpenShared(false);
-                    setSharing(false);
-                    alert("Não foi possivel re-postar. Tente novamente mais tarde.")
-                  })
-              }} disabled={sharing} data-test="confirm" >
-                {isDeleting ? "Deleting..." : "Yes, share!"}
-              </button>
-            </ModalContent>
-          </Modal>
-        </BoxPublication >
-        {openComments && (
-          <BoxComments data-test="comment-box" >
-            {post.comments && post.comments.map((comment, index) => (
-              <div className="comment" key={index} data-test="comment" >
-                <img src={comment.image} />
-                <div>
-                  <div className="box-user"> 
+              axios.put(`${process.env.REACT_APP_API_URL}/repost/${post.id}/${userId}`)
+                .then(() => {
+                  setIsModalOpenShared(false)
+                  fetchPosts();
+                  setSharing(false);
+                })
+                .catch((error) => {
+                  console.error("Erro ao deletar o post:", error);
+                  setIsModalOpenShared(false);
+                  setSharing(false);
+                  alert("Não foi possivel re-postar. Tente novamente mais tarde.")
+                })
+            }} disabled={sharing} data-test="confirm" >
+              {isDeleting ? "Deleting..." : "Yes, share!"}
+            </button>
+          </ModalContent>
+        </Modal>
+      </BoxPublication >
+      {openComments && (
+        <BoxComments data-test="comment-box" >
+          {post.comments && post.comments.map((comment, index) => (
+            <div className="comment" key={index} data-test="comment" >
+              <img src={comment.image} />
+              <div>
+                <div className="box-user">
                   <p className="user">{comment.username} </p>
                   {comment.relationship === null && (
                     <></>
@@ -331,24 +332,24 @@ function Posts({ post }) {
                   {comment.relationship !== null && (
                     <p className="following"> • {comment.relationship}</p>
                   )}
-                  </div>
-                  <p className="comment-text">{comment.comment}</p>
                 </div>
+                <p className="comment-text">{comment.comment}</p>
               </div>
-            ))}
-            <div className="add-comment">
-              <img src={userImage} />
-              <form onSubmit={addComment}>
-                <input placeholder="write a comment..." type="text"
-                  required value={comment} onChange={(e) => setComment(e.target.value)} data-test="comment-input"/>
-                <button type="submit" data-test="comment-submit">
-                  <ion-icon name="paper-plane-outline"></ion-icon>
-                </button>
-              </form>
             </div>
-          </BoxComments>
-        )}
-      </ContainerPost>
+          ))}
+          <div className="add-comment">
+            <img src={userImage} />
+            <form onSubmit={addComment}>
+              <input placeholder="write a comment..." type="text"
+                required value={comment} onChange={(e) => setComment(e.target.value)} data-test="comment-input" />
+              <button type="submit" data-test="comment-submit">
+                <ion-icon name="paper-plane-outline"></ion-icon>
+              </button>
+            </form>
+          </div>
+        </BoxComments>
+      )}
+    </ContainerPost>
   );
 }
 
@@ -639,21 +640,6 @@ const ModalContent = styled.div`
     margin-right: 10px;
   }
 `;
-const RepostConteiner = styled.div`
-      height:33px;
-      width: 100%;
-      max-width: 611px;
-
-      border-top-left-radius: 16px;
-      border-top-right-radius: 16px;
-      background: #1E1E1E;
-
-      display:flex;
-      padding-left:13px;
-      padding-top:4px;
-      box-sizing:border-box;
-`;
-
 
 const ButtonsContainer = styled.div`
   display: flex;
@@ -666,7 +652,6 @@ const RepostConteiner = styled.div`
 
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
-  margin-bottom: -27px;
   background: #1e1e1e;
 
   display: flex;

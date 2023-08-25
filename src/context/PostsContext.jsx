@@ -8,25 +8,22 @@ export function PostsProvider({ children }) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const { userId } = useContext(UserDataContext);
-  const [hasMore, setHasMore ] = useState(true);
+  const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
 
   async function fetchPosts() {
     const url = `${process.env.REACT_APP_API_URL}/timeline?userId=${userId}&page=${page}`;
 
-    console.log(url);
 
     setLoading(true);
     try {
       const response = await axios.get(url);
-      console.log(response.data);
 
       if (response.data.length === 0) {
         setHasMore(false);
       } else {
         const newPosts = filterDuplicates([...posts, ...response.data]);
 
-        console.log(newPosts);
         setPosts(newPosts);
         setPage(page + 1);
         setHasMore(true);
@@ -45,24 +42,24 @@ export function PostsProvider({ children }) {
 
   function hasDuplicate(arr, obj) {
     for (let i = 0; i < arr.length; i++) {
-        if (compareObjects(arr[i], obj)) {
-            return true;
-        }
+      if (compareObjects(arr[i], obj)) {
+        return true;
+      }
     }
     return false;
-}
-
-function filterDuplicates(arr) {
-  const uniqueObjects = [];
-
-  for (let i = 0; i < arr.length; i++) {
-      if (!hasDuplicate(uniqueObjects, arr[i])) {
-          uniqueObjects.push(arr[i]);
-      }
   }
 
-  return uniqueObjects;
-}
+  function filterDuplicates(arr) {
+    const uniqueObjects = [];
+
+    for (let i = 0; i < arr.length; i++) {
+      if (!hasDuplicate(uniqueObjects, arr[i])) {
+        uniqueObjects.push(arr[i]);
+      }
+    }
+
+    return uniqueObjects;
+  }
 
   useEffect(() => {
     fetchPosts();
