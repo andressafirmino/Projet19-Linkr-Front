@@ -76,17 +76,18 @@ export default function ProfilePage() {
       if (response.status === 204) {
         setHasMore(false);
         return;
-      }
-      if (response.data.response.length === 0) {
-        console.log(response.data.response.length);
-        setHasMore(false);
       } else {
         const newPosts = filterDuplicates([
           ...userPosts,
           ...response.data.response,
         ]);
 
-        setUserPosts(newPosts);
+        const filteredPosts = newPosts.filter(
+          (post) => post.userId === response.data.userData.id
+        );
+        console.log(filteredPosts);
+
+        setUserPosts(filteredPosts);
         setPage(page + 1);
         setHasMore(true);
         setUserProfile(response.data.userData);
